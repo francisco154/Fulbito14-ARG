@@ -36,7 +36,8 @@ import java.util.concurrent.Executors;
 
 /**
  * Player screen - uses ExoPlayer for native HLS/DASH playback
- * v2.7: Screenify API resolver for ESPN Premium, TNT Sports, DirecTV Sport
+ * v2.7 BETA 1.1: Screenify API resolver for ESPN Premium, TNT Sports, TELEFE
+ *        YouTube Live URL resolver for TV Publica, C5N, LN+
  *        Telefe API URL resolver, improved DASH support
  */
 public class PlayerActivity extends Activity {
@@ -201,14 +202,17 @@ public class PlayerActivity extends Activity {
     }
 
     /**
-     * v2.7: Check if a URL needs resolution before playback
+     * v2.7 BETA 1.1: Check if a URL needs resolution before playback
      * Screenify:// URLs need API resolution to get M3U8
+     * YouTube Live URLs need extraction of actual stream URL
      * Telefe API URLs return JSON/redirect, not direct M3U8
      */
     private boolean needsResolution(String url) {
         if (url == null) return false;
         // Screenify protocol - needs API resolution
         if (url.startsWith("screenify://")) return true;
+        // YouTube Live URLs - need stream extraction
+        if (url.contains("youtube.com/") || url.contains("youtu.be/")) return true;
         // Telefe API endpoint that needs resolution
         if (url.contains("telefe.com/Api/Videos/GetSourceUrl")) return true;
         // Any API endpoint that returns redirect/JSON instead of M3U8
@@ -217,7 +221,7 @@ public class PlayerActivity extends Activity {
     }
 
     /**
-     * v2.5: Resolve an API URL to get the actual stream URL, then play it
+     * v2.7 BETA 1.1: Resolve an API URL to get the actual stream URL, then play it
      */
     private void resolveAndPlay(String apiUrl, String customUserAgent) {
         statusText.setText("Resolviendo URL...");
@@ -229,8 +233,28 @@ public class PlayerActivity extends Activity {
                     Log.i("PlayerActivity", "Resolved URL: " + resolvedUrl);
                     playStream(resolvedUrl, customUserAgent);
                 } else {
-                    // Resolution failed - try playing the API URL directly (might redirect)
+                    // Resolution failed - try playing the URL directly (might redirect)
                     Log.w("PlayerActivity", "URL resolution failed, trying direct play");
+                    // For YouTube URLs, try opening in external app
+                    if (apiUrl.contains("youtube.com") || apiUrl.contains("youtu.be")) {
+                        try {
+                            Intent ytIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(apiUrl));
+                            ytIntent.setPackage("com.google.android.youtube.tv");
+                            startActivity(ytIntent);
+                            finish();
+                            return;
+                        } catch (Exception e) {
+                            // YouTube TV not available, try generic
+                            try {
+                                Intent genericIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(apiUrl));
+                                startActivity(genericIntent);
+                                finish();
+                                return;
+                            } catch (Exception e2) {
+                                // Can't open externally either
+                            }
+                        }
+                    }
                     playStream(apiUrl, customUserAgent);
                 }
             });
@@ -238,8 +262,8 @@ public class PlayerActivity extends Activity {
     }
 
     /**
-     * v2.7: Resolve a stream URL by making an HTTP request
-     * Handles Screenify:// protocol, Telefe API, redirects, JSON responses
+     * v2.7 BETA 1.1: Resolve a stream URL by making an HTTP request
+     * Handles Screenify:// protocol, YouTube Live, Telefe API, redirects, JSON responses
      */
     private String resolveStreamUrl(String apiUrl) {
         try {
@@ -247,6 +271,13 @@ public class PlayerActivity extends Activity {
             // screenify://CONFIG_UUID -> api.screenify.shop -> stream ID -> M3U8
             if (apiUrl.startsWith("screenify://")) {
                 return resolveScreenifyUrl(apiUrl);
+            }
+
+            // v2.7 BETA 1.1: YouTube Live URL resolution
+            // youtube.com/c/CHANNEL/live or youtube.com/watch?v=ID
+            // -> Extract actual HLS stream URL using YouTube page scraping
+            if (apiUrl.contains("youtube.com/") || apiUrl.contains("youtu.be/")) {
+                return resolveYouTubeLiveUrl(apiUrl);
             }
 
             URL url = new URL(apiUrl);
@@ -414,8 +445,131 @@ public class PlayerActivity extends Activity {
     }
 
     /**
+     * v2.7 BETA 1.1: Resolve YouTube Live URL to extract the actual stream URL
+     * For YouTube /live pages, extracts the video ID from the page HTML
+     * Then uses the YouTube embed page to find M3U8 stream URLs
+     * Falls back to opening in YouTube TV app if available
+     */
+    private String resolveYouTubeLiveUrl(String ytUrl) {
+        try {
+            Log.i("PlayerActivity", "Resolving YouTube Live: " + ytUrl);
+
+            // Step 1: Fetch the YouTube page to find the video ID
+            URL url = new URL(ytUrl);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setInstanceFollowRedirects(true);
+            conn.setConnectTimeout(10000);
+            conn.setReadTimeout(10000);
+            conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Linux; Android 11; AndroidTV) AppleWebKit/537.36");
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            StringBuilder body = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                body.append(line);
+            }
+            reader.close();
+            String finalUrl = conn.getURL().toString();
+            conn.disconnect();
+
+            String pageContent = body.toString();
+
+            // Step 2: Try to extract video ID from the page
+            String videoId = null;
+
+            // Pattern 1: Look for videoId in the page data
+            java.util.regex.Matcher m1 = java.util.regex.Pattern.compile("\"videoId\":\"([a-zA-Z0-9_-]{11})\"")
+                    .matcher(pageContent);
+            if (m1.find()) {
+                videoId = m1.group(1);
+                Log.i("PlayerActivity", "Found YouTube videoId: " + videoId);
+            }
+
+            // Pattern 2: Look for /watch?v= in the final URL
+            if (videoId == null) {
+                java.util.regex.Matcher m2 = java.util.regex.Pattern.compile("[?&]v=([a-zA-Z0-9_-]{11})")
+                        .matcher(finalUrl);
+                if (m2.find()) {
+                    videoId = m2.group(1);
+                    Log.i("PlayerActivity", "Found YouTube videoId from URL: " + videoId);
+                }
+            }
+
+            // Pattern 3: Look for /embed/ in the page
+            if (videoId == null) {
+                java.util.regex.Matcher m3 = java.util.regex.Pattern.compile("/embed/([a-zA-Z0-9_-]{11})")
+                        .matcher(pageContent);
+                if (m3.find()) {
+                    videoId = m3.group(1);
+                    Log.i("PlayerActivity", "Found YouTube videoId from embed: " + videoId);
+                }
+            }
+
+            if (videoId != null) {
+                // Step 3: Try to get the HLS manifest URL from YouTube
+                // We'll try the /get_hls_url approach
+                String hlsUrl = tryGetYouTubeHLS(videoId);
+                if (hlsUrl != null) {
+                    return hlsUrl;
+                }
+
+                // If we can't get HLS directly, return null so it falls back to
+                // opening in the YouTube TV app
+                Log.w("PlayerActivity", "Could not extract HLS, will use YouTube app fallback");
+            }
+
+            return null;
+        } catch (Exception e) {
+            Log.e("PlayerActivity", "YouTube Live resolution failed: " + e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Try to get HLS manifest URL from YouTube for a given video ID
+     * Uses the YouTube player API to extract stream URLs
+     */
+    private String tryGetYouTubeHLS(String videoId) {
+        try {
+            // Try fetching the embed page which sometimes has the stream URL
+            String embedUrl = "https://www.youtube.com/embed/" + videoId;
+            URL url = new URL(embedUrl);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setConnectTimeout(10000);
+            conn.setReadTimeout(10000);
+            conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Linux; Android 11; AndroidTV) AppleWebKit/537.36");
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            StringBuilder body = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                body.append(line);
+            }
+            reader.close();
+            conn.disconnect();
+
+            String pageContent = body.toString();
+
+            // Look for HLS manifest URL in the page
+            java.util.regex.Matcher m = java.util.regex.Pattern.compile(
+                    "(https?://[^\"\\\\\\s]+\\.m3u8[^\"\\\\\\s]*)"
+            ).matcher(pageContent);
+            if (m.find()) {
+                String hlsUrl = m.group(1).replace("\\u0026", "&");
+                Log.i("PlayerActivity", "Found YouTube HLS URL: " + hlsUrl);
+                return hlsUrl;
+            }
+
+            return null;
+        } catch (Exception e) {
+            Log.w("PlayerActivity", "YouTube HLS extraction failed: " + e.getMessage());
+            return null;
+        }
+    }
+
+    /**
      * Play a direct M3U8/HLS/DASH stream URL
-     * v2.7: Improved DASH support with DashMediaSource
+     * v2.7 BETA 1.1: Improved DASH support with DashMediaSource
      */
     private void playStream(String streamUrl, String customUserAgent) {
         if (player == null || isDestroyed || streamUrl == null || streamUrl.isEmpty()) {
