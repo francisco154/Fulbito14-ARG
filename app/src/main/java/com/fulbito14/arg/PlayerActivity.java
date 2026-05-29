@@ -1,6 +1,7 @@
 package com.fulbito14.arg;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,16 +16,18 @@ import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory;
+import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Player screen - uses ExoPlayer for native HLS/DASH playback
- * v2.2: Plays direct M3U8 URLs from iptv-org playlists
- * No more embed extraction needed - streams are direct URLs
+ * v2.3: Fixed Map.of() crash (API 21+), pass data via Intent, improved playback
  */
 public class PlayerActivity extends Activity {
 
@@ -53,6 +56,7 @@ public class PlayerActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
 
+        // Get channels from ChannelStore (same instance as list)
         channels = ChannelStore.getChannelsSync();
         currentChannelIndex = getIntent().getIntExtra("channel_index", 0);
 
@@ -110,7 +114,16 @@ public class PlayerActivity extends Activity {
     }
 
     private void loadChannel(int index) {
-        if (channels == null || index < 0 || index >= channels.size()) return;
+        if (channels == null || channels.isEmpty()) {
+            // Fallback: get channel data from intent extras
+            loadChannelFromIntent();
+            return;
+        }
+        if (index < 0 || index >= channels.size()) {
+            loadChannelFromIntent();
+            return;
+        }
+
         currentChannelIndex = index;
         retryCount = 0;
 
@@ -129,8 +142,35 @@ public class PlayerActivity extends Activity {
     }
 
     /**
+     * Fallback: load channel from intent extras if ChannelStore list doesn't match
+     */
+    private void loadChannelFromIntent() {
+        Intent intent = getIntent();
+        String name = intent.getStringExtra("channel_name");
+        int number = intent.getIntExtra("channel_number", 1);
+        String streamUrl = intent.getStringExtra("stream_url");
+        String category = intent.getStringExtra("channel_category");
+
+        channelNumber.setText(String.valueOf(number));
+        channelName.setText(name != null ? name : "Canal");
+        if (channelCategory != null) {
+            channelCategory.setText(category != null ? category : "");
+        }
+        statusText.setText("Conectando...");
+        progressBar.setVisibility(View.VISIBLE);
+        errorView.setVisibility(View.GONE);
+        showOverlay();
+
+        if (streamUrl != null && !streamUrl.isEmpty()) {
+            playStream(streamUrl);
+        } else {
+            handleError();
+        }
+    }
+
+    /**
      * Play a direct M3U8/HLS stream URL
-     * v2.2: No more embed extraction - direct stream URLs from M3U playlists
+     * v2.3 FIX: Uses HashMap instead of Map.of() for API 21+ compatibility
      */
     private void playStream(String streamUrl) {
         if (player == null || isDestroyed || streamUrl == null || streamUrl.isEmpty()) {
@@ -138,42 +178,50 @@ public class PlayerActivity extends Activity {
             return;
         }
 
-        DefaultHttpDataSource.Factory dataSourceFactory = new DefaultHttpDataSource.Factory()
-                .setUserAgent("Mozilla/5.0 (Linux; Android 11; AndroidTV) AppleWebKit/537.36")
-                .setAllowCrossProtocolRedirects(true)
-                .setConnectTimeoutMs(15000)
-                .setReadTimeoutMs(15000);
+        try {
+            DefaultHttpDataSource.Factory dataSourceFactory = new DefaultHttpDataSource.Factory()
+                    .setUserAgent("Mozilla/5.0 (Linux; Android 11; AndroidTV) AppleWebKit/537.36")
+                    .setAllowCrossProtocolRedirects(true)
+                    .setConnectTimeoutMs(15000)
+                    .setReadTimeoutMs(15000);
 
-        // For HLS streams, set Referer to help with some servers
-        String referer = extractReferer(streamUrl);
-        if (referer != null) {
-            dataSourceFactory.setDefaultRequestProperties(java.util.Map.of(
-                    "Referer", referer,
-                    "Origin", referer.endsWith("/") ? referer.substring(0, referer.length() - 1) : referer
-            ));
+            // v2.3 FIX: Use HashMap instead of Map.of() (requires API 24+)
+            // Map.of() crashes on Android 5.x/6.x with NoSuchMethodError
+            String referer = extractReferer(streamUrl);
+            if (referer != null) {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Referer", referer);
+                headers.put("Origin", referer.endsWith("/") ? referer.substring(0, referer.length() - 1) : referer);
+                dataSourceFactory.setDefaultRequestProperties(headers);
+            }
+
+            Uri uri = Uri.parse(streamUrl);
+
+            MediaSource mediaSource;
+
+            if (streamUrl.contains(".mpd")) {
+                // DASH stream - use DefaultMediaSourceFactory with dataSourceFactory
+                DefaultMediaSourceFactory mediaSourceFactory = new DefaultMediaSourceFactory(this)
+                        .setDataSourceFactory(dataSourceFactory);
+                mediaSource = mediaSourceFactory.createMediaSource(MediaItem.fromUri(uri));
+            } else if (streamUrl.contains(".m3u8") || streamUrl.contains(".m3u") ||
+                       streamUrl.contains("/playlist") || streamUrl.contains("/live/")) {
+                // HLS stream
+                mediaSource = new HlsMediaSource.Factory(dataSourceFactory)
+                        .createMediaSource(MediaItem.fromUri(uri));
+            } else {
+                // Default: try HLS first (most iptv-org streams are HLS)
+                mediaSource = new HlsMediaSource.Factory(dataSourceFactory)
+                        .createMediaSource(MediaItem.fromUri(uri));
+            }
+
+            player.setMediaSource(mediaSource);
+            player.prepare();
+            player.setPlayWhenReady(true);
+
+        } catch (Exception e) {
+            handleError();
         }
-
-        Uri uri = Uri.parse(streamUrl);
-
-        if (streamUrl.contains(".m3u8") || streamUrl.contains(".m3u")) {
-            // HLS stream
-            HlsMediaSource hlsSource = new HlsMediaSource.Factory(dataSourceFactory)
-                    .createMediaSource(MediaItem.fromUri(uri));
-            player.setMediaSource(hlsSource);
-        } else if (streamUrl.contains(".mpd")) {
-            // DASH stream
-            DefaultMediaSourceFactory mediaSourceFactory = new DefaultMediaSourceFactory(this)
-                    .setDataSourceFactory(dataSourceFactory);
-            player.setMediaSource(mediaSourceFactory.createMediaSource(MediaItem.fromUri(uri)));
-        } else {
-            // Progressive / other - try HLS first as most iptv-org streams are HLS
-            HlsMediaSource hlsSource = new HlsMediaSource.Factory(dataSourceFactory)
-                    .createMediaSource(MediaItem.fromUri(uri));
-            player.setMediaSource(hlsSource);
-        }
-
-        player.prepare();
-        player.setPlayWhenReady(true);
     }
 
     /**
@@ -203,9 +251,11 @@ public class PlayerActivity extends Activity {
             errorHint.setText("Reintentando (" + retryCount + "/" + MAX_RETRIES + ")...");
 
             handler.postDelayed(() -> {
-                if (!isDestroyed && channels != null && currentChannelIndex < channels.size()) {
-                    Channel ch = channels.get(currentChannelIndex);
-                    playStream(ch.streamUrl);
+                if (!isDestroyed) {
+                    String streamUrl = getStreamUrlForCurrentChannel();
+                    if (streamUrl != null) {
+                        playStream(streamUrl);
+                    }
                 }
             }, 2000);
         } else {
@@ -214,6 +264,13 @@ public class PlayerActivity extends Activity {
             errorText.setText("Sin senal");
             errorHint.setText("Presione ATRAS para volver");
         }
+    }
+
+    private String getStreamUrlForCurrentChannel() {
+        if (channels != null && currentChannelIndex >= 0 && currentChannelIndex < channels.size()) {
+            return channels.get(currentChannelIndex).streamUrl;
+        }
+        return getIntent().getStringExtra("stream_url");
     }
 
     private void showOverlay() {
@@ -236,6 +293,9 @@ public class PlayerActivity extends Activity {
         switch (keyCode) {
             case KeyEvent.KEYCODE_DPAD_UP:
                 if (channels != null && currentChannelIndex > 0) loadChannel(currentChannelIndex - 1);
+                else if (channels == null || channels.isEmpty()) {
+                    // Can't navigate without channel list
+                }
                 showOverlay();
                 return true;
             case KeyEvent.KEYCODE_DPAD_DOWN:

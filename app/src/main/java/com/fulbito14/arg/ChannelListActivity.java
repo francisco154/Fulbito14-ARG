@@ -24,7 +24,7 @@ import java.util.concurrent.Executors;
 
 /**
  * Channel list screen - shows channels from M3U playlists
- * v2.2: Fetches channels dynamically from iptv-org + other community sources
+ * v2.3: Fixed D-pad navigation, improved focus handling, no category headers breaking nav
  */
 public class ChannelListActivity extends Activity {
 
@@ -41,6 +41,7 @@ public class ChannelListActivity extends Activity {
     private View loadingContainer;
     private ProgressBar loadingBar;
     private TextView loadingText;
+    private TextView channelCountText;
     private ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @Override
@@ -56,6 +57,7 @@ public class ChannelListActivity extends Activity {
         loadingContainer = findViewById(R.id.loading_container);
         loadingBar = findViewById(R.id.loading_bar);
         loadingText = findViewById(R.id.loading_text);
+        channelCountText = findViewById(R.id.channel_count);
 
         String username = getIntent().getStringExtra("username");
         TextView userText = findViewById(R.id.text_user);
@@ -70,7 +72,6 @@ public class ChannelListActivity extends Activity {
 
         if (channels != null && !channels.isEmpty()) {
             showChannels();
-            // Refresh in background
             fetchChannelsInBackground();
         } else {
             showLoading();
@@ -79,13 +80,13 @@ public class ChannelListActivity extends Activity {
     }
 
     private void showLoading() {
-        loadingContainer.setVisibility(View.VISIBLE);
-        scrollView.setVisibility(View.GONE);
+        if (loadingContainer != null) loadingContainer.setVisibility(View.VISIBLE);
+        if (scrollView != null) scrollView.setVisibility(View.GONE);
     }
 
     private void hideLoading() {
-        loadingContainer.setVisibility(View.GONE);
-        scrollView.setVisibility(View.VISIBLE);
+        if (loadingContainer != null) loadingContainer.setVisibility(View.GONE);
+        if (scrollView != null) scrollView.setVisibility(View.VISIBLE);
     }
 
     private void fetchChannelsSync() {
@@ -104,7 +105,6 @@ public class ChannelListActivity extends Activity {
                         }
                     }, 300);
                 } else {
-                    // Even fresh fetch failed, use built-in
                     channels = ChannelStore.getChannels(this);
                     hideLoading();
                     renderChannels();
@@ -148,24 +148,27 @@ public class ChannelListActivity extends Activity {
         channelContainer.removeAllViews();
         if (channels == null || channels.isEmpty()) return;
 
+        if (channelCountText != null) {
+            channelCountText.setText(channels.size() + " canales");
+        }
+
         LayoutInflater inflater = getLayoutInflater();
         String lastCategory = "";
 
         for (int i = 0; i < channels.size(); i++) {
             Channel ch = channels.get(i);
 
-            // Add category separator if category changed
+            // Add category separator header (NOT focusable, won't break D-pad)
             if (ch.category != null && !ch.category.equals(lastCategory)) {
                 lastCategory = ch.category;
-                View separator = inflater.inflate(R.layout.channel_card, (ViewGroup) channelContainer, false);
-
-                // Create a section header
                 TextView header = new TextView(this);
-                header.setText(ch.category.toUpperCase());
+                header.setText("  " + ch.category.toUpperCase());
                 header.setTextColor(Color.parseColor("#FF6600"));
-                header.setTextSize(14);
-                header.setPadding(0, 20, 0, 8);
+                header.setTextSize(13);
+                header.setTypeface(null, android.graphics.Typeface.BOLD);
+                header.setPadding(0, 24, 0, 6);
                 header.setFocusable(false);
+                header.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
                 channelContainer.addView(header);
             }
 
@@ -188,30 +191,54 @@ public class ChannelListActivity extends Activity {
             logoBg.setBackgroundColor(bgColor);
             logoAbbr.setText(getLogoAbbr(ch.logoKey));
 
+            // Badge styling
+            badge.setVisibility(View.VISIBLE);
             if (ch.isSport()) {
-                badge.setVisibility(View.VISIBLE);
                 badge.setText("EN VIVO");
                 badge.setBackgroundColor(Color.parseColor("#FF3333"));
                 badge.setTextColor(Color.WHITE);
-            } else if (ch.isPremium()) {
-                badge.setVisibility(View.VISIBLE);
-                badge.setText("PREMIUM");
-                badge.setBackgroundColor(Color.parseColor("#FFD700"));
-                badge.setTextColor(Color.BLACK);
             } else {
-                badge.setVisibility(View.VISIBLE);
                 badge.setText("EN VIVO");
                 badge.setBackgroundColor(Color.parseColor("#FF3333"));
                 badge.setTextColor(Color.WHITE);
             }
 
-            card.setTag(Integer.valueOf(i));
-            card.setOnClickListener(v -> {
-                int idx = ((Integer) v.getTag()).intValue();
-                playChannel(idx);
-            });
+            // v2.3: Store channel index directly, use final for lambda
+            final int channelIndex = i;
+            card.setOnClickListener(v -> playChannel(channelIndex));
+
+            // v2.3: Set up proper D-pad navigation between cards
+            card.setNextFocusUpId(View.NO_ID);  // Will be set programmatically
+            card.setNextFocusDownId(View.NO_ID);
 
             channelContainer.addView(card);
+        }
+
+        // v2.3: Set up proper focus chain between card views
+        setupFocusChain();
+    }
+
+    /**
+     * v2.3: Build proper D-pad focus chain by linking card views to each other
+     * This fixes broken D-pad navigation caused by non-focusable category headers
+     */
+    private void setupFocusChain() {
+        int prevCardId = View.NO_ID;
+
+        for (int i = 0; i < channelContainer.getChildCount(); i++) {
+            View child = channelContainer.getChildAt(i);
+            if (child.isFocusable()) {
+                if (prevCardId != View.NO_ID) {
+                    // Link previous card's down to this card
+                    View prevCard = channelContainer.findViewById(prevCardId);
+                    if (prevCard != null) {
+                        prevCard.setNextFocusDownId(child.getId());
+                    }
+                    // Link this card's up to previous card
+                    child.setNextFocusUpId(prevCardId);
+                }
+                prevCardId = child.getId();
+            }
         }
     }
 
@@ -264,29 +291,25 @@ public class ChannelListActivity extends Activity {
     }
 
     private void setFocus(int index) {
-        if (channelContainer == null) return;
-        // Count only focusable children (skip headers)
-        int focusableCount = 0;
-        for (int i = 0; i < channelContainer.getChildCount(); i++) {
-            if (channelContainer.getChildAt(i).isFocusable()) focusableCount++;
-        }
-        if (focusableCount == 0) return;
+        if (channels == null || channels.isEmpty()) return;
         if (index < 0) index = 0;
         if (index >= channels.size()) index = channels.size() - 1;
 
         focusedIndex = index;
 
-        // Find the actual child view for this channel index
-        int viewIndex = 0;
+        // Find and focus the correct card view
         int channelCount = 0;
         for (int i = 0; i < channelContainer.getChildCount(); i++) {
             View child = channelContainer.getChildAt(i);
-            if (!child.isFocusable()) continue; // Skip headers
+            if (!child.isFocusable()) continue;
+
             if (channelCount == index) {
                 child.setBackgroundColor(Color.parseColor("#2A1508"));
                 child.setTranslationX(10f);
                 child.requestFocus();
-                if (scrollView != null) scrollView.smoothScrollTo(0, child.getTop() - 100);
+                if (scrollView != null) {
+                    scrollView.smoothScrollTo(0, child.getTop() - 100);
+                }
             } else {
                 child.setBackgroundColor(Color.parseColor("#141414"));
                 child.setTranslationX(0f);
@@ -352,13 +375,17 @@ public class ChannelListActivity extends Activity {
             handler.removeCallbacks(numberInputTimeout);
         }
         numberInputTimeout = () -> {
-            int chNumber = Integer.parseInt(numberBuffer.toString());
-            numberBuffer.setLength(0);
-            for (int i = 0; i < channels.size(); i++) {
-                if (channels.get(i).number == chNumber) {
-                    playChannel(i);
-                    break;
+            try {
+                int chNumber = Integer.parseInt(numberBuffer.toString());
+                numberBuffer.setLength(0);
+                for (int i = 0; i < channels.size(); i++) {
+                    if (channels.get(i).number == chNumber) {
+                        playChannel(i);
+                        break;
+                    }
                 }
+            } catch (NumberFormatException e) {
+                numberBuffer.setLength(0);
             }
             overlayContainer.setVisibility(View.GONE);
         };
@@ -368,7 +395,7 @@ public class ChannelListActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (focusedIndex >= 0 && channelContainer != null) {
+        if (channels != null && focusedIndex >= 0 && focusedIndex < channels.size()) {
             setFocus(focusedIndex);
         }
     }
