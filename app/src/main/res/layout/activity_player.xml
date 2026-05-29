@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000">
+
+    <!-- ExoPlayer View -->
+    <com.google.android.exoplayer2.ui.PlayerView
+        android:id="@+id/player_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#000000" />
+
+    <!-- Overlay -->
+    <LinearLayout
+        android:id="@+id/player_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center_vertical"
+        android:visibility="visible">
+
+        <!-- Top Bar -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="24dp"
+            android:background="@drawable/player_top_gradient">
+
+            <TextView
+                android:id="@+id/player_channel_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1"
+                android:textSize="32sp"
+                android:textColor="#FF6600"
+                android:textStyle="bold"
+                android:layout_marginRight="16dp" />
+
+            <TextView
+                android:id="@+id/player_channel_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ESPN"
+                android:textSize="26sp"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/player_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Conectando..."
+                android:textSize="18sp"
+                android:textColor="#AAAAAA" />
+
+            <ProgressBar
+                android:id="@+id/player_progress"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginLeft="12dp"
+                android:visibility="visible" />
+        </LinearLayout>
+
+        <!-- Spacer -->
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <!-- Bottom Controls -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:padding="20dp"
+            android:background="@drawable/player_bottom_gradient">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Arriba/Abajo = Cambiar Canal"
+                android:textSize="16sp"
+                android:textColor="#666666"
+                android:padding="8dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Atras = Volver"
+                android:textSize="16sp"
+                android:textColor="#666666"
+                android:padding="8dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="OK = Pausar"
+                android:textSize="16sp"
+                android:textColor="#666666"
+                android:padding="8dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Error View -->
+    <LinearLayout
+        android:id="@+id/player_error"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="gone"
+        android:background="#CC000000">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="⚠"
+            android:textSize="56sp"
+            android:layout_marginBottom="12dp" />
+
+        <TextView
+            android:id="@+id/error_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sin senal"
+            android:textSize="26sp"
+            android:textColor="#FF3333"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/error_hint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Intentando enlace alternativo..."
+            android:textSize="18sp"
+            android:textColor="#AAAAAA" />
+    </LinearLayout>
+
+</FrameLayout>

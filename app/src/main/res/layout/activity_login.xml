@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="#0D0D0D"
+    android:padding="60dp">
+
+    <!-- Logo -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="⚽"
+        android:textSize="72sp"
+        android:layout_marginBottom="20dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Fulbito14 ARG"
+        android:textSize="48sp"
+        android:textColor="#FF6600"
+        android:textStyle="bold"
+        android:letterSpacing="0.05"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="DEPORTES EN VIVO"
+        android:textSize="20sp"
+        android:textColor="#AAAAAA"
+        android:letterSpacing="0.3"
+        android:layout_marginBottom="50dp" />
+
+    <!-- User Field -->
+    <EditText
+        android:id="@+id/edit_user"
+        android:layout_width="600dp"
+        android:layout_height="wrap_content"
+        android:hint="Usuario"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#666666"
+        android:textSize="24sp"
+        android:padding="18dp"
+        android:background="@drawable/edit_text_bg"
+        android:layout_marginBottom="20dp"
+        android:singleLine="true"
+        android:inputType="text"
+        android:imeOptions="actionNext" />
+
+    <!-- Pass Field -->
+    <EditText
+        android:id="@+id/edit_pass"
+        android:layout_width="600dp"
+        android:layout_height="wrap_content"
+        android:hint="Contraseña"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#666666"
+        android:textSize="24sp"
+        android:padding="18dp"
+        android:background="@drawable/edit_text_bg"
+        android:layout_marginBottom="30dp"
+        android:singleLine="true"
+        android:inputType="textPassword"
+        android:imeOptions="actionDone" />
+
+    <!-- Login Button -->
+    <Button
+        android:id="@+id/btn_login"
+        android:layout_width="600dp"
+        android:layout_height="wrap_content"
+        android:text="INGRESAR"
+        android:textSize="24sp"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:letterSpacing="0.1"
+        android:background="@drawable/btn_primary"
+        android:padding="18dp" />
+
+    <!-- Error -->
+    <TextView
+        android:id="@+id/text_error"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textColor="#FF3333"
+        android:textSize="20sp"
+        android:layout_marginTop="20dp"
+        android:visibility="gone" />
+
+</LinearLayout>

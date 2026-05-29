@@ -1,0 +1,16 @@
+*.apk
+*.keystore
+*.jks
+local.properties
+.gradle/
+build/
+app/build/
+*.class
+*.dex
+*.jar
+!gradle-wrapper.jar
+.DS_Store
+*.iml
+.idea/
+.cxx/
+*.log
