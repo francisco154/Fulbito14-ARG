@@ -2,6 +2,7 @@ package com.fulbito14.arg;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -10,10 +11,14 @@ import android.widget.TextView;
 
 /**
  * Login screen - minimalist and professional
- * v2.5: Simplified - removed XC login mode (no credentials available)
+ * v2.7 BETA 1.3: Remember login - auto-login if previously authenticated
  * Only default login with limonsin14/1276
  */
 public class LoginActivity extends Activity {
+
+    private static final String PREFS_NAME = "fulbito14_auth";
+    private static final String KEY_LOGGED_IN = "is_logged_in";
+    private static final String KEY_USERNAME = "saved_username";
 
     private EditText userField;
     private EditText passField;
@@ -23,6 +28,21 @@ public class LoginActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // v2.7 BETA 1.3: Check if already logged in - skip login screen
+        SharedPreferences authPrefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        if (authPrefs.getBoolean(KEY_LOGGED_IN, false)) {
+            String savedUser = authPrefs.getString(KEY_USERNAME, "");
+            if (!savedUser.isEmpty()) {
+                // Already authenticated - go directly to channel list
+                Intent intent = new Intent(this, ChannelListActivity.class);
+                intent.putExtra("username", savedUser);
+                startActivity(intent);
+                finish();
+                return;
+            }
+        }
+
         setContentView(R.layout.activity_login);
 
         userField = findViewById(R.id.edit_user);
@@ -82,6 +102,14 @@ public class LoginActivity extends Activity {
 
         if (user.equals(ChannelStore.USERNAME) && pass.equals(ChannelStore.PASSWORD)) {
             errorText.setVisibility(View.GONE);
+
+            // v2.7 BETA 1.3: Save login state so we don't ask again
+            SharedPreferences authPrefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+            authPrefs.edit()
+                     .putBoolean(KEY_LOGGED_IN, true)
+                     .putString(KEY_USERNAME, user)
+                     .apply();
+
             Intent intent = new Intent(this, ChannelListActivity.class);
             intent.putExtra("username", user);
             startActivity(intent);

@@ -21,6 +21,8 @@ import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.source.dash.DashMediaSource;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
+import com.google.android.exoplayer2.LoadControl;
+import com.google.android.exoplayer2.DefaultLoadControl;
 
 import android.util.Log;
 
@@ -36,11 +38,9 @@ import java.util.concurrent.Executors;
 
 /**
  * Player screen - uses ExoPlayer for native HLS/DASH playback
- * v2.7 BETA 1.2: Screenify API resolver for ESPN Premium, TNT Sports
- *        Videx proxy resolver for TELEFE (non-CDN)
+ * v2.7 BETA 1.3: TELEFE via alsolnet, DeporTV via Videx, TN via vodgc M3U8
+ *        High buffer config (50s/60s) for smooth streaming
  *        YouTube Live URL resolver for C5N, LN+
- *        TV Publica now direct M3U8 via arcast.com.ar
- *        Added Canal 26, Litus TV, Canal 3, Canal 10
  */
 public class PlayerActivity extends Activity {
 
@@ -93,8 +93,23 @@ public class PlayerActivity extends Activity {
     }
 
     private void setupPlayer() {
+        // v2.7 BETA 1.3: High buffer config for smooth streaming
+        // Buffer up to 60 seconds ahead for smooth playback
+        // DefaultLoadControl defaults: minBuffer=50s, maxBuffer=50s
+        // We increase maxBuffer to 60s and keep defaults for the rest
+        DefaultLoadControl loadControl = new DefaultLoadControl.Builder()
+                .setBufferDurationsMs(
+                        50000,   // minBufferMs = 50 seconds
+                        60000,   // maxBufferMs = 60 seconds
+                        2500,    // bufferForPlaybackMs = 2.5 seconds (start playing quickly)
+                        5000     // bufferForPlaybackAfterRebufferMs = 5 seconds
+                )
+                .setPrioritizeTimeOverSizeThresholds(true)
+                .build();
+
         player = new ExoPlayer.Builder(this)
                 .setHandleAudioBecomingNoisy(true)
+                .setLoadControl(loadControl)
                 .build();
 
         playerView.setPlayer(player);

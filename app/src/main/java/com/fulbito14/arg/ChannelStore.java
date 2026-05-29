@@ -12,13 +12,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Manages channel data - v2.7 BETA 1.2:
+ * Manages channel data - v2.7 BETA 1.3:
  * ESPN Premium, TNT Sports via Screenify CDN
- * TELEFE via Videx proxy (non-CDN)
- * Canal 9 Litoral, DeporTV, Net TV, Canal E, Bravo TV direct M3U8
- * TV Publica via arcast.com.ar (direct M3U8, no YouTube)
- * A24, TN en Vivo (DASH)
- * NEW: Canal 26, Litus TV, Canal 3 La Pampa, Canal 10 Cordoba
+ * TELEFE via alsolnet direct M3U8 (canal34hd)
+ * DeporTV via Videx proxy (streamlock dead)
+ * TN en Vivo via vodgc.net M3U8 (no more DASH!)
+ * TV Publica via arcast.com.ar direct M3U8
+ * C5N, LN+ via YouTube (NO public M3U8 exists)
+ * Canal 26, Litus TV, Canal 3, Canal 10 (regionales)
  * Falls back to built-in channels if API is unavailable
  */
 public class ChannelStore {
@@ -190,13 +191,14 @@ public class ChannelStore {
     }
 
     // ============================================================
-    // Built-in Fallback Channels - v2.7 BETA 1.2
+    // Built-in Fallback Channels - v2.7 BETA 1.3
     // Screenify CDN: ESPN Premium, TNT Sports
-    // Videx Proxy: TELEFE (non-CDN)
-    // Direct M3U8: Canal 9 Litoral, DeporTV, Net TV, Canal E, Bravo TV
-    //              TV Publica (arcast), Canal 26, Litus TV, Canal 3, Canal 10
-    // DASH: TN en Vivo
-    // YouTube: C5N, LN+ (no direct stream available)
+    // Videx Proxy: DeporTV (streamlock dead)
+    // Direct M3U8: TELEFE (alsolnet), Canal 9, TV Publica (arcast),
+    //              Net TV, Canal E, Bravo TV, El Trece, Telemax
+    //              TN en Vivo (vodgc.net - NO MORE DASH!)
+    //              Canal 26, Litus TV, Canal 3, Canal 10
+    // YouTube: C5N, LN+ (no public M3U8 exists)
     // ============================================================
 
     private static List<Channel> getBuiltinChannels() {
@@ -219,8 +221,9 @@ public class ChannelStore {
                 "https://amg26268-amg26268c14-freelivesports-emea-10267.playouts.now.amagi.tv/ts-us-e2-n2/playlist/amg26268-sportsstudio-tycsports-freelivesportsemea/playlist.m3u8",
                 "", "TyC Sports - Deportes 24hs", "builtin"));
 
+        // BETA 1.3: DeporTV via Videx proxy (old streamlock is dead)
         channels.add(new Channel(4, "DeporTV", 4, "Deportes", "Argentina", "deportv",
-                "https://5fb24b460df87.streamlock.net/live-cont.ar/deportv/playlist.m3u8",
+                "videx://deportv/index.m3u8",
                 "", "DeporTV - Deporte Publico Argentino", "builtin"));
 
         channels.add(new Channel(5, "FIFA+ Hispanic America", 5, "Deportes", "Latinoamerica", "tv",
@@ -241,10 +244,10 @@ public class ChannelStore {
                 "https://livetrx01.vodgc.net/eltrecetv/index.m3u8",
                 "", "El Trece Argentina", "builtin"));
 
-        // BETA 1.2: TELEFE via Videx proxy (non-CDN, direct M3U8 resolution)
+        // BETA 1.3: TELEFE via alsolnet direct M3U8 (canal34hd = Telefe cable)
         channels.add(new Channel(9, "TELEFE", 9, "Entretenimiento", "Argentina", "telefe",
-                "videx://telefe/index.m3u8",
-                "", "Telefe Argentina - Videx Proxy", "builtin"));
+                "https://streamyes.alsolnet.com/canal34hd/live/playlist.m3u8",
+                "", "Telefe Argentina - Canal 34 HD", "builtin"));
 
         channels.add(new Channel(10, "Canal 9", 10, "Entretenimiento", "Argentina", "canal9",
                 "https://stream.arcast.live/ahora/ahora/playlist.m3u8",
@@ -276,9 +279,10 @@ public class ChannelStore {
                 "https://g5.vxral-slo.transport.edge-access.net/a12/ngrp:a24-100056_all/playlist.m3u8?sense=true",
                 "", "A24 Noticias Argentina", "builtin"));
 
+        // BETA 1.3: TN via vodgc.net direct M3U8 (1080p/720p/480p/360p) - NO MORE DASH!
         channels.add(new Channel(17, "TN en Vivo", 17, "Noticias", "Argentina", "tn",
-                "https://latam-cache-sv2-cdn.latamlive.net/TN_ENC_LIVE/index.mpd",
-                "", "Todo Noticias Argentina", "builtin"));
+                "https://live-01-01-tn.vodgc.net/TN_DAI_Beta/index.m3u8",
+                "", "Todo Noticias Argentina - HD", "builtin"));
 
         // BETA 1.2: TV Publica via arcast.com.ar - direct M3U8 (no YouTube)
         channels.add(new Channel(18, "TV Publica", 18, "Noticias", "Argentina", "publica",
