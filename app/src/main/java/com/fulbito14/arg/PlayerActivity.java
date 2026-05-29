@@ -27,7 +27,7 @@ import java.util.Map;
 
 /**
  * Player screen - uses ExoPlayer for native HLS/DASH playback
- * v2.3: Fixed Map.of() crash (API 21+), pass data via Intent, improved playback
+ * v2.4: Custom User-Agent support from Channel (EXTVLCOPT), improved XC stream handling
  */
 public class PlayerActivity extends Activity {
 
@@ -50,6 +50,9 @@ public class PlayerActivity extends Activity {
     private int retryCount = 0;
     private static final int MAX_RETRIES = 2;
     private boolean isDestroyed = false;
+
+    // v2.4: Track current channel's custom user-agent
+    private String currentCustomUserAgent = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,7 +141,9 @@ public class PlayerActivity extends Activity {
         errorView.setVisibility(View.GONE);
         showOverlay();
 
-        playStream(ch.streamUrl);
+        // v2.4: Store custom user-agent from channel
+        currentCustomUserAgent = ch.customUserAgent;
+        playStream(ch.streamUrl, ch.customUserAgent);
     }
 
     /**
@@ -151,6 +156,9 @@ public class PlayerActivity extends Activity {
         String streamUrl = intent.getStringExtra("stream_url");
         String category = intent.getStringExtra("channel_category");
 
+        // v2.4: Get custom user-agent from intent extras
+        String customUA = intent.getStringExtra("custom_user_agent");
+
         channelNumber.setText(String.valueOf(number));
         channelName.setText(name != null ? name : "Canal");
         if (channelCategory != null) {
@@ -161,8 +169,11 @@ public class PlayerActivity extends Activity {
         errorView.setVisibility(View.GONE);
         showOverlay();
 
+        // v2.4: Store custom user-agent
+        currentCustomUserAgent = customUA;
+
         if (streamUrl != null && !streamUrl.isEmpty()) {
-            playStream(streamUrl);
+            playStream(streamUrl, customUA);
         } else {
             handleError();
         }
@@ -170,23 +181,27 @@ public class PlayerActivity extends Activity {
 
     /**
      * Play a direct M3U8/HLS stream URL
-     * v2.3 FIX: Uses HashMap instead of Map.of() for API 21+ compatibility
+     * v2.4: Accepts optional customUserAgent parameter for EXTVLCOPT support
      */
-    private void playStream(String streamUrl) {
+    private void playStream(String streamUrl, String customUserAgent) {
         if (player == null || isDestroyed || streamUrl == null || streamUrl.isEmpty()) {
             handleError();
             return;
         }
 
         try {
+            // v2.4: Use custom user-agent if provided, otherwise use default
+            String userAgent = (customUserAgent != null && !customUserAgent.isEmpty())
+                    ? customUserAgent
+                    : "Mozilla/5.0 (Linux; Android 11; AndroidTV) AppleWebKit/537.36";
+
             DefaultHttpDataSource.Factory dataSourceFactory = new DefaultHttpDataSource.Factory()
-                    .setUserAgent("Mozilla/5.0 (Linux; Android 11; AndroidTV) AppleWebKit/537.36")
+                    .setUserAgent(userAgent)
                     .setAllowCrossProtocolRedirects(true)
                     .setConnectTimeoutMs(15000)
                     .setReadTimeoutMs(15000);
 
             // v2.3 FIX: Use HashMap instead of Map.of() (requires API 24+)
-            // Map.of() crashes on Android 5.x/6.x with NoSuchMethodError
             String referer = extractReferer(streamUrl);
             if (referer != null) {
                 Map<String, String> headers = new HashMap<>();
@@ -254,7 +269,7 @@ public class PlayerActivity extends Activity {
                 if (!isDestroyed) {
                     String streamUrl = getStreamUrlForCurrentChannel();
                     if (streamUrl != null) {
-                        playStream(streamUrl);
+                        playStream(streamUrl, currentCustomUserAgent);
                     }
                 }
             }, 2000);

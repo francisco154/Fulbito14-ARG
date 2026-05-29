@@ -327,6 +327,10 @@ public class ChannelListActivity extends Activity {
         intent.putExtra("channel_number", ch.number);
         intent.putExtra("stream_url", ch.streamUrl);
         intent.putExtra("channel_category", ch.category != null ? ch.category : "");
+        // v2.4: Pass custom user-agent from EXTVLCOPT
+        if (ch.customUserAgent != null && !ch.customUserAgent.isEmpty()) {
+            intent.putExtra("custom_user_agent", ch.customUserAgent);
+        }
         startActivity(intent);
     }
 

@@ -14,14 +14,19 @@ import okhttp3.Response;
 
 /**
  * Fetches and parses M3U playlists from community-maintained sources
- * v2.2: Replaces embed-based system with direct M3U playlist parsing
+ * v2.4: Added South America/Brazil/Chile/Colombia/Mexico sources, EXTVLCOPT support,
+ *        public static guessLogoKeyStatic for XtreamCodesClient
  *
  * Sources:
- * 1. iptv-org Argentina (auto-updated by community)
+ * 1. iptv-org Argentina
  * 2. iptv-org Sports category
  * 3. iptv-org Spanish language
  * 4. radiosargentina.com.ar
- * 5. m3u.cl
+ * 5. iptv-org South America region (NEW v2.4)
+ * 6. iptv-org Brazil (NEW v2.4)
+ * 7. iptv-org Chile (NEW v2.4)
+ * 8. iptv-org Colombia (NEW v2.4)
+ * 9. iptv-org Mexico (NEW v2.4)
  */
 public class M3UPlaylistFetcher {
 
@@ -32,12 +37,17 @@ public class M3UPlaylistFetcher {
             .followSslRedirects(true)
             .build();
 
-    // Playlist source URLs
+    // Playlist source URLs (v2.4: added 5 new sources)
     private static final String[] PLAYLIST_URLS = {
         "https://iptv-org.github.io/iptv/countries/ar.m3u",           // Argentina
         "https://iptv-org.github.io/iptv/categories/sports.m3u",      // Sports worldwide
         "https://iptv-org.github.io/iptv/languages/spa.m3u",          // Spanish language
         "https://radiosargentina.com.ar/TVAR.m3u",                    // Argentina curated
+        "https://iptv-org.github.io/iptv/regions/south-america.m3u",  // South America region (v2.4)
+        "https://iptv-org.github.io/iptv/countries/br.m3u",           // Brazil (v2.4)
+        "https://iptv-org.github.io/iptv/countries/cl.m3u",           // Chile (v2.4)
+        "https://iptv-org.github.io/iptv/countries/co.m3u",           // Colombia (v2.4)
+        "https://iptv-org.github.io/iptv/countries/mx.m3u",           // Mexico (v2.4)
     };
 
     // M3U metadata parsing patterns
@@ -45,6 +55,8 @@ public class M3UPlaylistFetcher {
     private static final Pattern TVG_LOGO = Pattern.compile("tvg-logo=\"([^\"]*)\"");
     private static final Pattern GROUP_TITLE = Pattern.compile("group-title=\"([^\"]*)\"");
     private static final Pattern TVG_ID = Pattern.compile("tvg-id=\"([^\"]*)\"");
+    // v2.4: EXTVLCOPT user-agent pattern
+    private static final Pattern EXTVLCOPT_UA = Pattern.compile("#EXTVLCOPT:http-user-agent=(.+)");
     // Fallback: channel name after last comma in EXTINF line
     private static final Pattern COMMA_NAME = Pattern.compile(",([^,]+)$");
 
@@ -54,7 +66,8 @@ public class M3UPlaylistFetcher {
         "deport", "sport", "futbol", "football", "win sport", "tudn",
         "golf", "tennis", "nba", "nfl", "mlb", "ufc", "boxing", "boxeo",
         "tve", "telefe", "trece", "america tv", "canal 9", "tv publica",
-        "deportv", "gol", "latino", "argentina"
+        "deportv", "gol", "latino", "argentina", "sportv", "globo",
+        "band", "teletrak", "pluto"
     };
 
     private static final String[] BLOCK_KEYWORDS = {
@@ -131,6 +144,7 @@ public class M3UPlaylistFetcher {
 
     /**
      * Parse M3U playlist content into Channel objects
+     * v2.4: Added EXTVLCOPT:http-user-agent support
      */
     public static List<Channel> parseM3U(String m3uContent, String source) {
         List<Channel> channels = new ArrayList<>();
@@ -140,6 +154,7 @@ public class M3UPlaylistFetcher {
 
         String[] lines = m3uContent.split("\n");
         String currentExtinf = null;
+        String currentUserAgent = null;  // v2.4: track EXTVLCOPT user-agent
 
         for (String line : lines) {
             line = line.trim();
@@ -147,15 +162,24 @@ public class M3UPlaylistFetcher {
 
             if (line.startsWith("#EXTINF")) {
                 currentExtinf = line;
+                // Reset custom user-agent for new entry
+                currentUserAgent = null;
+            } else if (line.startsWith("#EXTVLCOPT:http-user-agent=")) {
+                // v2.4: Parse EXTVLCOPT user-agent directive
+                Matcher m = EXTVLCOPT_UA.matcher(line);
+                if (m.find()) {
+                    currentUserAgent = m.group(1).trim();
+                }
             } else if (currentExtinf != null && !line.startsWith("#")) {
                 // This is a stream URL line
                 if (isValidStreamUrl(line)) {
-                    Channel ch = parseChannel(currentExtinf, line, source);
+                    Channel ch = parseChannel(currentExtinf, line, source, currentUserAgent);
                     if (ch != null && !isBlocked(ch.name)) {
                         channels.add(ch);
                     }
                 }
                 currentExtinf = null;
+                currentUserAgent = null;
             }
         }
 
@@ -164,8 +188,9 @@ public class M3UPlaylistFetcher {
 
     /**
      * Parse a single EXTINF line + URL into a Channel
+     * v2.4: Added customUserAgent parameter
      */
-    private static Channel parseChannel(String extinf, String streamUrl, String source) {
+    private static Channel parseChannel(String extinf, String streamUrl, String source, String customUserAgent) {
         try {
             String name = extractValue(extinf, TVG_NAME);
             if (name == null || name.isEmpty()) {
@@ -188,8 +213,9 @@ public class M3UPlaylistFetcher {
             String logoKey = guessLogoKey(name);
             String description = name + " - " + category;
 
+            // v2.4: Use the full Channel constructor with customUserAgent
             return new Channel(0, name, 0, category, country, logoKey,
-                             streamUrl, logoUrl, description, source);
+                             streamUrl, logoUrl, description, source, customUserAgent);
         } catch (Exception e) {
             return null;
         }
@@ -225,7 +251,8 @@ public class M3UPlaylistFetcher {
             lower.contains("fox sport") || lower.contains("tnt sport") || lower.contains("tyc") ||
             lower.contains("futbol") || lower.contains("gol") || lower.contains("win sport") ||
             lower.contains("nba") || lower.contains("nfl") || lower.contains("ufc") ||
-            lower.contains("tudn") || lower.contains("dsports") || lower.contains("directv sport")) {
+            lower.contains("tudn") || lower.contains("dsports") || lower.contains("directv sport") ||
+            lower.contains("sportv") || lower.contains("teletrak")) {
             return "Deportes";
         }
         if (lower.contains("news") || lower.contains("noticia") || lower.contains("tn") ||
@@ -261,10 +288,21 @@ public class M3UPlaylistFetcher {
         if (lower.contains("brasil") || lower.contains("globo") || lower.contains("sportv")) return "Brasil";
         if (lower.contains("mexic") || lower.contains("tudn") || lower.contains("azteca")) return "Mexico";
         if (lower.contains("colombia") || lower.contains("win sport")) return "Colombia";
+        if (lower.contains("chile") || lower.contains("teletrak")) return "Chile";
         return "Latinoamerica";
     }
 
+    /**
+     * Private guessLogoKey - used internally by parseChannel
+     */
     private static String guessLogoKey(String name) {
+        return guessLogoKeyStatic(name);
+    }
+
+    /**
+     * v2.4: Public static guessLogoKey - can be called from XtreamCodesClient
+     */
+    public static String guessLogoKeyStatic(String name) {
         if (name == null) return "tv";
         String lower = name.toLowerCase();
         if (lower.contains("espn")) return "espn";
@@ -284,6 +322,10 @@ public class M3UPlaylistFetcher {
         if (lower.contains("globo")) return "globo";
         if (lower.contains("sportv")) return "sportv";
         if (lower.contains("band")) return "band";
+        if (lower.contains("teletrak")) return "tv";
+        if (lower.contains("pluto")) return "tv";
+        if (lower.contains("a24")) return "tn";
+        if (lower.contains("bravo")) return "tv";
         return "tv";
     }
 

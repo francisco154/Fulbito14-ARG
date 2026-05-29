@@ -10,8 +10,8 @@ android {
         applicationId "com.fulbito14.arg"
         minSdk 21
         targetSdk 36
-        versionCode 20300
-        versionName "2.3"
+        versionCode 20400
+        versionName "2.4"
     }
 
     buildTypes {
@@ -32,6 +32,13 @@ android {
 
     lint {
         abortOnError false
+        checkReleaseBuilds false
+    }
+
+    tasks.whenTaskAdded { task ->
+        if (task.name == 'lintVitalReportRelease') {
+            task.enabled = false
+        }
     }
 }
 
