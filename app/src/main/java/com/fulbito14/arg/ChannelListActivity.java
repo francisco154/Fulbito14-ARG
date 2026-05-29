@@ -23,8 +23,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * Channel list screen - shows channels from M3U playlists
- * v2.3: Fixed D-pad navigation, improved focus handling, no category headers breaking nav
+ * Channel list screen - shows channels from Infiniti Stream API
+ * v2.5: Fixed loading bug - ALWAYS shows builtins first, then refreshes
+ *       No more stuck on loading spinner
  */
 public class ChannelListActivity extends Activity {
 
@@ -43,6 +44,7 @@ public class ChannelListActivity extends Activity {
     private TextView loadingText;
     private TextView channelCountText;
     private ExecutorService executor = Executors.newSingleThreadExecutor();
+    private boolean isRefreshing = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,21 +69,33 @@ public class ChannelListActivity extends Activity {
 
         updateClock();
 
-        // Load channels - try cache first, then fetch fresh in background
+        // v2.5 FIX: Get channels IMMEDIATELY (never blocks, builtins always available)
         channels = ChannelStore.getChannels(this);
 
         if (channels != null && !channels.isEmpty()) {
-            showChannels();
-            fetchChannelsInBackground();
+            // Show channels right away
+            hideLoading();
+            renderChannels();
+
+            handler.postDelayed(() -> {
+                if (channelContainer.getChildCount() > 0) {
+                    setFocus(0);
+                }
+            }, 300);
+
+            // Then refresh in background
+            refreshChannelsInBackground();
         } else {
-            showLoading();
+            // Should never happen (builtins always available), but just in case
+            showLoading("Cargando canales...");
             fetchChannelsSync();
         }
     }
 
-    private void showLoading() {
+    private void showLoading(String msg) {
         if (loadingContainer != null) loadingContainer.setVisibility(View.VISIBLE);
         if (scrollView != null) scrollView.setVisibility(View.GONE);
+        if (loadingText != null && msg != null) loadingText.setText(msg);
     }
 
     private void hideLoading() {
@@ -89,6 +103,9 @@ public class ChannelListActivity extends Activity {
         if (scrollView != null) scrollView.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * v2.5: Fetch channels synchronously (only used when builtins somehow fail)
+     */
     private void fetchChannelsSync() {
         executor.execute(() -> {
             List<Channel> freshChannels = ChannelStore.fetchFreshChannels(this);
@@ -105,6 +122,7 @@ public class ChannelListActivity extends Activity {
                         }
                     }, 300);
                 } else {
+                    // Even fresh fetch failed - show builtins
                     channels = ChannelStore.getChannels(this);
                     hideLoading();
                     renderChannels();
@@ -119,11 +137,19 @@ public class ChannelListActivity extends Activity {
         });
     }
 
-    private void fetchChannelsInBackground() {
+    /**
+     * v2.5: Refresh channels in background - does NOT block UI
+     * Only updates the list if we get more channels than we currently have
+     */
+    private void refreshChannelsInBackground() {
+        if (isRefreshing) return;
+        isRefreshing = true;
+
         executor.execute(() -> {
             List<Channel> freshChannels = ChannelStore.fetchFreshChannels(this);
 
             handler.post(() -> {
+                isRefreshing = false;
                 if (freshChannels != null && !freshChannels.isEmpty() &&
                     (channels == null || freshChannels.size() > channels.size())) {
                     channels = freshChannels;
@@ -131,17 +157,6 @@ public class ChannelListActivity extends Activity {
                 }
             });
         });
-    }
-
-    private void showChannels() {
-        hideLoading();
-        renderChannels();
-
-        handler.postDelayed(() -> {
-            if (channelContainer.getChildCount() > 0) {
-                setFocus(0);
-            }
-        }, 300);
     }
 
     private void renderChannels() {
@@ -191,37 +206,25 @@ public class ChannelListActivity extends Activity {
             logoBg.setBackgroundColor(bgColor);
             logoAbbr.setText(getLogoAbbr(ch.logoKey));
 
-            // Badge styling
+            // Badge
             badge.setVisibility(View.VISIBLE);
-            if (ch.isSport()) {
-                badge.setText("EN VIVO");
-                badge.setBackgroundColor(Color.parseColor("#FF3333"));
-                badge.setTextColor(Color.WHITE);
-            } else {
-                badge.setText("EN VIVO");
-                badge.setBackgroundColor(Color.parseColor("#FF3333"));
-                badge.setTextColor(Color.WHITE);
-            }
+            badge.setText("EN VIVO");
+            badge.setBackgroundColor(Color.parseColor("#FF3333"));
+            badge.setTextColor(Color.WHITE);
 
-            // v2.3: Store channel index directly, use final for lambda
             final int channelIndex = i;
             card.setOnClickListener(v -> playChannel(channelIndex));
 
-            // v2.3: Set up proper D-pad navigation between cards
-            card.setNextFocusUpId(View.NO_ID);  // Will be set programmatically
+            card.setNextFocusUpId(View.NO_ID);
             card.setNextFocusDownId(View.NO_ID);
 
             channelContainer.addView(card);
         }
 
-        // v2.3: Set up proper focus chain between card views
+        // Set up proper focus chain
         setupFocusChain();
     }
 
-    /**
-     * v2.3: Build proper D-pad focus chain by linking card views to each other
-     * This fixes broken D-pad navigation caused by non-focusable category headers
-     */
     private void setupFocusChain() {
         int prevCardId = View.NO_ID;
 
@@ -229,12 +232,10 @@ public class ChannelListActivity extends Activity {
             View child = channelContainer.getChildAt(i);
             if (child.isFocusable()) {
                 if (prevCardId != View.NO_ID) {
-                    // Link previous card's down to this card
                     View prevCard = channelContainer.findViewById(prevCardId);
                     if (prevCard != null) {
                         prevCard.setNextFocusDownId(child.getId());
                     }
-                    // Link this card's up to previous card
                     child.setNextFocusUpId(prevCardId);
                 }
                 prevCardId = child.getId();
@@ -297,7 +298,6 @@ public class ChannelListActivity extends Activity {
 
         focusedIndex = index;
 
-        // Find and focus the correct card view
         int channelCount = 0;
         for (int i = 0; i < channelContainer.getChildCount(); i++) {
             View child = channelContainer.getChildAt(i);
@@ -327,7 +327,6 @@ public class ChannelListActivity extends Activity {
         intent.putExtra("channel_number", ch.number);
         intent.putExtra("stream_url", ch.streamUrl);
         intent.putExtra("channel_category", ch.category != null ? ch.category : "");
-        // v2.4: Pass custom user-agent from EXTVLCOPT
         if (ch.customUserAgent != null && !ch.customUserAgent.isEmpty()) {
             intent.putExtra("custom_user_agent", ch.customUserAgent);
         }
