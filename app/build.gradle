@@ -64,9 +64,10 @@ dependencies {
     implementation 'androidx.leanback:leanback:1.0.0'
     implementation 'com.google.android.material:material:1.12.0'
 
-    // ExoPlayer for HLS streaming
+    // ExoPlayer for HLS + DASH streaming
     implementation 'com.google.android.exoplayer:exoplayer:2.19.1'
     implementation 'com.google.android.exoplayer:exoplayer-hls:2.19.1'
+    implementation 'com.google.android.exoplayer:exoplayer-dash:2.19.1'
     implementation 'com.google.android.exoplayer:exoplayer-ui:2.19.1'
 
     // OkHttp for fetching embed pages

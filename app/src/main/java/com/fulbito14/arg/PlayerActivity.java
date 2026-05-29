@@ -18,16 +18,25 @@ import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
+import com.google.android.exoplayer2.source.dash.DashMediaSource;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
 
+import android.util.Log;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Player screen - uses ExoPlayer for native HLS/DASH playback
- * v2.4: Custom User-Agent support from Channel (EXTVLCOPT), improved XC stream handling
+ * v2.5: Telefe API URL resolver, improved DASH support, ESPN Premium fallback
  */
 public class PlayerActivity extends Activity {
 
@@ -50,6 +59,7 @@ public class PlayerActivity extends Activity {
     private int retryCount = 0;
     private static final int MAX_RETRIES = 2;
     private boolean isDestroyed = false;
+    private ExecutorService resolverExecutor = Executors.newSingleThreadExecutor();
 
     // v2.4: Track current channel's custom user-agent
     private String currentCustomUserAgent = null;
@@ -143,7 +153,13 @@ public class PlayerActivity extends Activity {
 
         // v2.4: Store custom user-agent from channel
         currentCustomUserAgent = ch.customUserAgent;
-        playStream(ch.streamUrl, ch.customUserAgent);
+
+        // v2.5: Check if this URL needs resolution (e.g., Telefe API)
+        if (needsResolution(ch.streamUrl)) {
+            resolveAndPlay(ch.streamUrl, ch.customUserAgent);
+        } else {
+            playStream(ch.streamUrl, ch.customUserAgent);
+        }
     }
 
     /**
@@ -173,15 +189,162 @@ public class PlayerActivity extends Activity {
         currentCustomUserAgent = customUA;
 
         if (streamUrl != null && !streamUrl.isEmpty()) {
-            playStream(streamUrl, customUA);
+            if (needsResolution(streamUrl)) {
+                resolveAndPlay(streamUrl, customUA);
+            } else {
+                playStream(streamUrl, customUA);
+            }
         } else {
             handleError();
         }
     }
 
     /**
-     * Play a direct M3U8/HLS stream URL
-     * v2.4: Accepts optional customUserAgent parameter for EXTVLCOPT support
+     * v2.5: Check if a URL needs resolution before playback
+     * Telefe API URLs return JSON/redirect, not direct M3U8
+     */
+    private boolean needsResolution(String url) {
+        if (url == null) return false;
+        // Telefe API endpoint that needs resolution
+        if (url.contains("telefe.com/Api/Videos/GetSourceUrl")) return true;
+        // Any API endpoint that returns redirect/JSON instead of M3U8
+        if (url.contains("/Api/") && !url.endsWith(".m3u8") && !url.endsWith(".mpd")) return true;
+        return false;
+    }
+
+    /**
+     * v2.5: Resolve an API URL to get the actual stream URL, then play it
+     */
+    private void resolveAndPlay(String apiUrl, String customUserAgent) {
+        statusText.setText("Resolviendo URL...");
+        resolverExecutor.execute(() -> {
+            String resolvedUrl = resolveStreamUrl(apiUrl);
+            handler.post(() -> {
+                if (isDestroyed) return;
+                if (resolvedUrl != null && !resolvedUrl.isEmpty()) {
+                    Log.i("PlayerActivity", "Resolved URL: " + resolvedUrl);
+                    playStream(resolvedUrl, customUserAgent);
+                } else {
+                    // Resolution failed - try playing the API URL directly (might redirect)
+                    Log.w("PlayerActivity", "URL resolution failed, trying direct play");
+                    playStream(apiUrl, customUserAgent);
+                }
+            });
+        });
+    }
+
+    /**
+     * v2.5: Resolve a stream URL by making an HTTP request
+     * Handles redirects, JSON responses, and direct M3U8 URLs
+     */
+    private String resolveStreamUrl(String apiUrl) {
+        try {
+            URL url = new URL(apiUrl);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setInstanceFollowRedirects(true);
+            conn.setConnectTimeout(10000);
+            conn.setReadTimeout(10000);
+            conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Linux; Android 11; AndroidTV) AppleWebKit/537.36");
+            conn.setRequestProperty("Accept", "application/json, application/vnd.apple.mpegurl, */*");
+
+            int responseCode = conn.getResponseCode();
+            String contentType = conn.getContentType();
+            String finalUrl = conn.getURL().toString();
+
+            // If the final URL is an M3U8/DASH, use it directly
+            if (finalUrl.contains(".m3u8") || finalUrl.contains(".mpd") ||
+                finalUrl.contains("/playlist") || finalUrl.contains("/index.")) {
+                conn.disconnect();
+                return finalUrl;
+            }
+
+            // If content type is M3U8/HLS, use the URL
+            if (contentType != null && (contentType.contains("mpegurl") || contentType.contains("dash"))) {
+                conn.disconnect();
+                return finalUrl;
+            }
+
+            // Try reading the response as text
+            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            StringBuilder body = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                body.append(line);
+            }
+            reader.close();
+            conn.disconnect();
+
+            String responseBody = body.toString().trim();
+
+            // Check if response is JSON with a URL
+            if (responseBody.startsWith("{")) {
+                // Try to extract URL from JSON
+                try {
+                    org.json.JSONObject json = new org.json.JSONObject(responseBody);
+                    // Common JSON fields for stream URLs
+                    String[] urlFields = {"url", "sourceUrl", "stream_url", "hls", "src", "file", "source", "link", "playUrl", "video_url"};
+                    for (String field : urlFields) {
+                        if (json.has(field)) {
+                            String extractedUrl = json.optString(field, "");
+                            if (!extractedUrl.isEmpty() && extractedUrl.startsWith("http")) {
+                                return extractedUrl;
+                            }
+                        }
+                    }
+                    // Try nested objects
+                    if (json.has("data")) {
+                        org.json.JSONObject data = json.optJSONObject("data");
+                        if (data != null) {
+                            for (String field : urlFields) {
+                                if (data.has(field)) {
+                                    String extractedUrl = data.optString(field, "");
+                                    if (!extractedUrl.isEmpty() && extractedUrl.startsWith("http")) {
+                                        return extractedUrl;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (json.has("response")) {
+                        org.json.JSONObject resp = json.optJSONObject("response");
+                        if (resp != null) {
+                            for (String field : urlFields) {
+                                if (resp.has(field)) {
+                                    String extractedUrl = resp.optString(field, "");
+                                    if (!extractedUrl.isEmpty() && extractedUrl.startsWith("http")) {
+                                        return extractedUrl;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    Log.w("PlayerActivity", "JSON parse failed: " + e.getMessage());
+                }
+            }
+
+            // Check if response itself is an M3U8
+            if (responseBody.startsWith("#EXTM3U")) {
+                return apiUrl; // The URL itself returns M3U8 content
+            }
+
+            // Check if response is a plain URL
+            if (responseBody.startsWith("http") && (responseBody.contains(".m3u8") || responseBody.contains(".mpd"))) {
+                return responseBody;
+            }
+
+            // Fallback: return the final URL after redirects
+            return finalUrl;
+
+        } catch (Exception e) {
+            Log.e("PlayerActivity", "URL resolution failed: " + e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Play a direct M3U8/HLS/DASH stream URL
+     * v2.5: Improved DASH support with DashMediaSource
      */
     private void playStream(String streamUrl, String customUserAgent) {
         if (player == null || isDestroyed || streamUrl == null || streamUrl.isEmpty()) {
@@ -214,18 +377,17 @@ public class PlayerActivity extends Activity {
 
             MediaSource mediaSource;
 
-            if (streamUrl.contains(".mpd")) {
-                // DASH stream - use DefaultMediaSourceFactory with dataSourceFactory
-                DefaultMediaSourceFactory mediaSourceFactory = new DefaultMediaSourceFactory(this)
-                        .setDataSourceFactory(dataSourceFactory);
-                mediaSource = mediaSourceFactory.createMediaSource(MediaItem.fromUri(uri));
+            if (streamUrl.contains(".mpd") || streamUrl.contains("index.mpd")) {
+                // v2.5: DASH stream - use DashMediaSource for proper DASH playback
+                mediaSource = new DashMediaSource.Factory(dataSourceFactory)
+                        .createMediaSource(MediaItem.fromUri(uri));
             } else if (streamUrl.contains(".m3u8") || streamUrl.contains(".m3u") ||
                        streamUrl.contains("/playlist") || streamUrl.contains("/live/")) {
                 // HLS stream
                 mediaSource = new HlsMediaSource.Factory(dataSourceFactory)
                         .createMediaSource(MediaItem.fromUri(uri));
             } else {
-                // Default: try HLS first (most iptv-org streams are HLS)
+                // Default: try HLS first (most IPTV streams are HLS)
                 mediaSource = new HlsMediaSource.Factory(dataSourceFactory)
                         .createMediaSource(MediaItem.fromUri(uri));
             }
@@ -349,6 +511,7 @@ public class PlayerActivity extends Activity {
     protected void onDestroy() {
         isDestroyed = true;
         handler.removeCallbacksAndMessages(null);
+        resolverExecutor.shutdownNow();
         if (player != null) {
             player.release();
             player = null;
