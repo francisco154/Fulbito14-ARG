@@ -42,7 +42,7 @@
             padding: 3px 14px;
             border-radius: 20px;
             font-size: 12px;
-            margin-bottom: 32px;
+            margin-bottom: 8px;
         }
         .badge {
             display: inline-block;
@@ -55,10 +55,21 @@
             letter-spacing: 1px;
             margin-left: 8px;
         }
-        .badge-new {
+        .badge-beta {
             display: inline-block;
-            background: #3A1A1A;
-            color: #FF6600;
+            background: #3A2A1A;
+            color: #FF9944;
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-left: 8px;
+        }
+        .badge-stable {
+            display: inline-block;
+            background: #1A3A1A;
+            color: #4CAF50;
             padding: 3px 10px;
             border-radius: 4px;
             font-size: 10px;
@@ -77,16 +88,32 @@
             font-weight: 700;
             letter-spacing: 2px;
             transition: all 0.2s ease;
-            margin-bottom: 12px;
+            margin-bottom: 6px;
         }
         .download-btn:hover {
             background: #FF7722;
             box-shadow: 0 4px 20px rgba(255, 102, 0, 0.3);
         }
+        .download-btn.beta {
+            background: #333;
+            color: #FF9944;
+        }
+        .download-btn.beta:hover {
+            background: #444;
+            box-shadow: 0 4px 20px rgba(255, 153, 68, 0.2);
+        }
         .file-info {
             font-size: 12px;
             color: #444;
-            margin-bottom: 48px;
+            margin-bottom: 8px;
+        }
+        .version-section {
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid #1A1A1A;
+        }
+        .version-section:last-of-type {
+            border-bottom: none;
         }
         .whats-new {
             text-align: left;
@@ -171,6 +198,11 @@
             border-color: #0A1A3A;
             background: #0A0D1A;
         }
+        .channel-tag.screenify {
+            color: #CC66FF;
+            border-color: #1A0A3A;
+            background: #0D041A;
+        }
         .login-info {
             margin-top: 28px;
             padding-top: 28px;
@@ -209,6 +241,31 @@
         .signing .check {
             color: #4CAF50;
         }
+        .discovery {
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid #1A1A1A;
+            text-align: left;
+        }
+        .discovery h3 {
+            color: #CC66FF;
+            margin-bottom: 10px;
+            font-size: 11px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+        .discovery code {
+            color: #888;
+            font-size: 11px;
+            background: #111;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        .discovery p {
+            color: #666;
+            font-size: 12px;
+            margin: 4px 0;
+        }
         .footer {
             margin-top: 48px;
             font-size: 10px;
@@ -221,33 +278,59 @@
     <div class="container">
         <div class="logo">F14</div>
         <div class="logo-sub">Argentina</div>
-        <div class="version">v2.5 <span class="badge-new">NEW</span></div>
-        <br>
-        <a href="https://github.com/francisco154/Fulbito14-ARG/releases/download/v2.5/fulbito14-arg-v2.5.apk" class="download-btn">
-            DESCARGAR
-        </a>
-        <div class="file-info">11.3 MB &middot; APK &middot; Android 5.0+</div>
+
+        <!-- BETA 1.1 -->
+        <div class="version-section">
+            <div class="version">v2.7 BETA 1.1 <span class="badge-beta">BETA</span></div>
+            <br><br>
+            <a href="https://github.com/francisco154/Fulbito14-ARG/releases/download/v2.7-beta1.1/fulbito14-ARG-v2.7-BETA1.1.apk" class="download-btn beta">
+                DESCARGAR BETA
+            </a>
+            <div class="file-info">11.4 MB &middot; APK &middot; Android 5.0+</div>
+        </div>
+
+        <!-- STABLE v2.7 -->
+        <div class="version-section">
+            <div class="version">v2.7 <span class="badge-stable">ESTABLE</span></div>
+            <br><br>
+            <a href="https://github.com/francisco154/Fulbito14-ARG/releases/download/v2.7/fulbito14-arg-v2.7.apk" class="download-btn">
+                DESCARGAR ESTABLE
+            </a>
+            <div class="file-info">APK &middot; Android 5.0+</div>
+        </div>
 
         <div class="whats-new">
-            <h3>Nuevo en v2.5</h3>
+            <h3>Nuevo en BETA 1.1</h3>
             <ul>
-                <li class="new-feature">DirecTV Sport Argentina (DASH stream)</li>
-                <li class="new-feature">ESPN Premium ARG (DASH stream)</li>
-                <li class="new-feature">Soporte DASH/MPD para ExoPlayer (TN, DirecTV)</li>
-                <li class="new-feature">Telefe API Resolver - resuelve URL automaticamente</li>
-                <li>Telemax - Nuevo CDN confirmado funcionando</li>
-                <li>TN en Vivo - Ahora via DASH (latamlive.net)</li>
-                <li>15 canales en total: 7 Deportes + 6 Entretenimiento + 2 Noticias</li>
+                <li class="new-feature">Screenify CDN - ESPN Premium + TNT Sports + TELEFE</li>
+                <li class="new-feature">20 canales: +5 Noticias (A24, TN, TV Publica, C5N, LN+)</li>
+                <li class="new-feature">YouTube Live resolver (fallback a YouTube TV app)</li>
+                <li class="new-feature">TELEFE ahora via Screenify CDN (sin API de Telefe)</li>
+                <li>Canal 9 Litoral (nuevo M3U8 arcast.live)</li>
+                <li>DeporTV, Net TV, Canal E agregados</li>
                 <li>Firma V1+V2+V3 verificada</li>
             </ul>
         </div>
 
+        <div class="discovery">
+            <h3>Descubrimiento Screenify CDN</h3>
+            <p>1. <code>elitegol.vip</code> &rarr; iframe mediahosting</p>
+            <p>2. <code>api.screenify.shop</code> &rarr; stream number</p>
+            <p>3. <code>streamhostingcdn.top/stream/NUM/</code> &rarr; M3U8</p>
+        </div>
+
         <div class="channels">
-            <h3>Canales Deportes</h3>
+            <h3>Deportes Premium</h3>
+            <div class="channel-grid">
+                <span class="channel-tag screenify">ESPN Premium</span>
+                <span class="channel-tag screenify">TNT Sports</span>
+            </div>
+        </div>
+
+        <div class="channels">
+            <h3>Deportes</h3>
             <div class="channel-grid">
                 <span class="channel-tag sports">TyC Sports</span>
-                <span class="channel-tag sports">DirecTV Sport</span>
-                <span class="channel-tag premium">ESPN Premium</span>
                 <span class="channel-tag sports">DeporTV</span>
                 <span class="channel-tag sports">FIFA+</span>
                 <span class="channel-tag sports">Pluto TV Futbol</span>
@@ -256,29 +339,34 @@
         </div>
 
         <div class="channels">
-            <h3>Canales Entretenimiento</h3>
+            <h3>Entretenimiento</h3>
             <div class="channel-grid">
                 <span class="channel-tag fta">El Trece</span>
-                <span class="channel-tag fta">Telefe</span>
+                <span class="channel-tag screenify">TELEFE</span>
                 <span class="channel-tag fta">Canal 9</span>
                 <span class="channel-tag fta">America TV</span>
                 <span class="channel-tag fta">Bravo TV</span>
                 <span class="channel-tag fta">Telemax</span>
+                <span class="channel-tag fta">Net TV</span>
+                <span class="channel-tag fta">Canal E</span>
             </div>
         </div>
 
         <div class="channels">
-            <h3>Canales Noticias</h3>
+            <h3>Noticias</h3>
             <div class="channel-grid">
                 <span class="channel-tag news">A24</span>
                 <span class="channel-tag news">TN en Vivo</span>
+                <span class="channel-tag news">TV Publica</span>
+                <span class="channel-tag news">C5N</span>
+                <span class="channel-tag news">LN+</span>
             </div>
         </div>
 
         <div class="login-info">
             <h3>Acceso</h3>
             <p>Usuario: limonsin14</p>
-            <p>Contraseña: 1276</p>
+            <p>Contrase&ntilde;a: 1276</p>
         </div>
 
         <div class="signing">
@@ -288,7 +376,7 @@
             <p><span class="check">&#10003;</span> V3 (APK Signature Scheme v3)</p>
         </div>
 
-        <div class="footer">NATIVE ANDROID TV &middot; DASH + HLS &middot; 15 CANALES</div>
+        <div class="footer">NATIVE ANDROID TV &middot; DASH + HLS + SCREENIFY CDN &middot; 20 CANALES</div>
     </div>
 </body>
 </html>
