@@ -10,8 +10,8 @@ android {
         applicationId "com.fulbito14.arg"
         minSdk 21
         targetSdk 28
-        versionCode 20701
-        versionName "2.7-beta1.1"
+        versionCode 20702
+        versionName "2.7-beta1.2"
     }
 
     buildTypes {

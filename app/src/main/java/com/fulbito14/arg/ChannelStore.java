@@ -12,11 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Manages channel data - v2.7 BETA 1.1: Screenify CDN integration
- * ESPN Premium, TNT Sports, TELEFE, TyC Sports via Screenify API
+ * Manages channel data - v2.7 BETA 1.2:
+ * ESPN Premium, TNT Sports via Screenify CDN
+ * TELEFE via Videx proxy (non-CDN)
  * Canal 9 Litoral, DeporTV, Net TV, Canal E, Bravo TV direct M3U8
- * A24, TN, TV Publica, C5N, LN+ added
- * No more M3U fetcher, no more XtreamCodesClient
+ * TV Publica via arcast.com.ar (direct M3U8, no YouTube)
+ * A24, TN en Vivo (DASH)
+ * NEW: Canal 26, Litus TV, Canal 3 La Pampa, Canal 10 Cordoba
  * Falls back to built-in channels if API is unavailable
  */
 public class ChannelStore {
@@ -188,10 +190,13 @@ public class ChannelStore {
     }
 
     // ============================================================
-    // Built-in Fallback Channels - v2.7 BETA 1.1
-    // Screenify CDN: ESPN Premium, TNT Sports, TELEFE, TyC Sports
+    // Built-in Fallback Channels - v2.7 BETA 1.2
+    // Screenify CDN: ESPN Premium, TNT Sports
+    // Videx Proxy: TELEFE (non-CDN)
     // Direct M3U8: Canal 9 Litoral, DeporTV, Net TV, Canal E, Bravo TV
-    // News: A24, TN, TV Publica, C5N, LN+
+    //              TV Publica (arcast), Canal 26, Litus TV, Canal 3, Canal 10
+    // DASH: TN en Vivo
+    // YouTube: C5N, LN+ (no direct stream available)
     // ============================================================
 
     private static List<Channel> getBuiltinChannels() {
@@ -233,12 +238,13 @@ public class ChannelStore {
         // ===================== ENTRETENIMIENTO =====================
 
         channels.add(new Channel(8, "El Trece", 8, "Entretenimiento", "Argentina", "trece",
-                "https://live-01-02-eltrece.vodgc.net/eltrecetv/index.m3u8",
+                "https://livetrx01.vodgc.net/eltrecetv/index.m3u8",
                 "", "El Trece Argentina", "builtin"));
 
+        // BETA 1.2: TELEFE via Videx proxy (non-CDN, direct M3U8 resolution)
         channels.add(new Channel(9, "TELEFE", 9, "Entretenimiento", "Argentina", "telefe",
-                "screenify://8c781776-6aae-4f6e-b673-e04dd923c3db",
-                "", "Telefe Argentina - Screenify CDN", "builtin"));
+                "videx://telefe/index.m3u8",
+                "", "Telefe Argentina - Videx Proxy", "builtin"));
 
         channels.add(new Channel(10, "Canal 9", 10, "Entretenimiento", "Argentina", "canal9",
                 "https://stream.arcast.live/ahora/ahora/playlist.m3u8",
@@ -253,7 +259,7 @@ public class ChannelStore {
                 "", "Bravo TV Argentina", "builtin"));
 
         channels.add(new Channel(13, "Telemax", 13, "Entretenimiento", "Argentina", "tv",
-                "https://live-edge01.telecentro.net.ar/live/smil:tlx.smil/playlist.m3u8",
+                "https://stream-gtlc.telecentro.net.ar/hls/telemaxhls/main.m3u8",
                 "", "Telemax Argentina", "builtin"));
 
         channels.add(new Channel(14, "Net TV", 14, "Entretenimiento", "Argentina", "tv",
@@ -274,10 +280,13 @@ public class ChannelStore {
                 "https://latam-cache-sv2-cdn.latamlive.net/TN_ENC_LIVE/index.mpd",
                 "", "Todo Noticias Argentina", "builtin"));
 
-        channels.add(new Channel(18, "TV Publica", 18, "Noticias", "Argentina", "tv",
-                "https://www.youtube.com/user/TVPublicaArgentina/live",
-                "", "Television Publica Argentina", "builtin"));
+        // BETA 1.2: TV Publica via arcast.com.ar - direct M3U8 (no YouTube)
+        channels.add(new Channel(18, "TV Publica", 18, "Noticias", "Argentina", "publica",
+                "https://stream.arcast.com.ar/envivo/castv/playlist.m3u8",
+                "", "Television Publica Argentina - Arcast", "builtin"));
 
+        // C5N and LN+: No direct non-YouTube streams available
+        // These channels have locked streams behind DRM/geo-blocked CDNs
         channels.add(new Channel(19, "C5N", 19, "Noticias", "Argentina", "tn",
                 "https://www.youtube.com/c/c5n/live",
                 "", "C5N Noticias Argentina", "builtin"));
@@ -285,6 +294,24 @@ public class ChannelStore {
         channels.add(new Channel(20, "LN+", 20, "Noticias", "Argentina", "tn",
                 "https://www.youtube.com/c/LaNacionMas/live",
                 "", "La Nacion Mas Argentina", "builtin"));
+
+        // ===================== CANALES REGIONALES =====================
+
+        channels.add(new Channel(21, "Canal 26", 21, "Regionales", "Argentina", "tv",
+                "https://stream-gtlc.telecentro.net.ar/hls/canal26hls/main.m3u8",
+                "", "Canal 26 Buenos Aires", "builtin"));
+
+        channels.add(new Channel(22, "Litus TV", 22, "Regionales", "Argentina", "tv",
+                "https://stream.arcast.com.ar/litustv/ngrp:litustv_all/playlist.m3u8",
+                "", "Litus TV Argentina", "builtin"));
+
+        channels.add(new Channel(23, "Canal 3 La Pampa", 23, "Regionales", "Argentina", "tv",
+                "https://stream.arcast.com.ar/c3lapampa/ngrp:c3lapampa_all/playlist.m3u8",
+                "", "Canal 3 La Pampa Argentina", "builtin"));
+
+        channels.add(new Channel(24, "Canal 10 Cordoba", 24, "Regionales", "Argentina", "tv",
+                "https://stream.arcast.net:4443/canal10/ngrp:canal10_all/playlist.m3u8",
+                "", "Canal 10 Cordoba Argentina", "builtin"));
 
         return channels;
     }

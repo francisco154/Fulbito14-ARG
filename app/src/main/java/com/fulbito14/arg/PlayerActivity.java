@@ -36,9 +36,11 @@ import java.util.concurrent.Executors;
 
 /**
  * Player screen - uses ExoPlayer for native HLS/DASH playback
- * v2.7 BETA 1.1: Screenify API resolver for ESPN Premium, TNT Sports, TELEFE
- *        YouTube Live URL resolver for TV Publica, C5N, LN+
- *        Telefe API URL resolver, improved DASH support
+ * v2.7 BETA 1.2: Screenify API resolver for ESPN Premium, TNT Sports
+ *        Videx proxy resolver for TELEFE (non-CDN)
+ *        YouTube Live URL resolver for C5N, LN+
+ *        TV Publica now direct M3U8 via arcast.com.ar
+ *        Added Canal 26, Litus TV, Canal 3, Canal 10
  */
 public class PlayerActivity extends Activity {
 
@@ -202,26 +204,26 @@ public class PlayerActivity extends Activity {
     }
 
     /**
-     * v2.7 BETA 1.1: Check if a URL needs resolution before playback
+     * v2.7 BETA 1.2: Check if a URL needs resolution before playback
      * Screenify:// URLs need API resolution to get M3U8
+     * Videx:// URLs need proxy resolution to get M3U8
      * YouTube Live URLs need extraction of actual stream URL
-     * Telefe API URLs return JSON/redirect, not direct M3U8
      */
     private boolean needsResolution(String url) {
         if (url == null) return false;
         // Screenify protocol - needs API resolution
         if (url.startsWith("screenify://")) return true;
+        // Videx protocol - needs proxy resolution
+        if (url.startsWith("videx://")) return true;
         // YouTube Live URLs - need stream extraction
         if (url.contains("youtube.com/") || url.contains("youtu.be/")) return true;
-        // Telefe API endpoint that needs resolution
-        if (url.contains("telefe.com/Api/Videos/GetSourceUrl")) return true;
         // Any API endpoint that returns redirect/JSON instead of M3U8
         if (url.contains("/Api/") && !url.endsWith(".m3u8") && !url.endsWith(".mpd")) return true;
         return false;
     }
 
     /**
-     * v2.7 BETA 1.1: Resolve an API URL to get the actual stream URL, then play it
+     * v2.7 BETA 1.2: Resolve an API URL to get the actual stream URL, then play it
      */
     private void resolveAndPlay(String apiUrl, String customUserAgent) {
         statusText.setText("Resolviendo URL...");
@@ -262,8 +264,8 @@ public class PlayerActivity extends Activity {
     }
 
     /**
-     * v2.7 BETA 1.1: Resolve a stream URL by making an HTTP request
-     * Handles Screenify:// protocol, YouTube Live, Telefe API, redirects, JSON responses
+     * v2.7 BETA 1.2: Resolve a stream URL by making an HTTP request
+     * Handles Screenify:// protocol, Videx:// proxy, YouTube Live, redirects, JSON responses
      */
     private String resolveStreamUrl(String apiUrl) {
         try {
@@ -271,6 +273,12 @@ public class PlayerActivity extends Activity {
             // screenify://CONFIG_UUID -> api.screenify.shop -> stream ID -> M3U8
             if (apiUrl.startsWith("screenify://")) {
                 return resolveScreenifyUrl(apiUrl);
+            }
+
+            // v2.7 BETA 1.2: Videx proxy resolution
+            // videx://CHANNEL_PATH -> api.videx.lol/keyvidex.php -> signed M3U8
+            if (apiUrl.startsWith("videx://")) {
+                return resolveVidexUrl(apiUrl);
             }
 
             // v2.7 BETA 1.1: YouTube Live URL resolution
@@ -440,6 +448,84 @@ public class PlayerActivity extends Activity {
             return null;
         } catch (Exception e) {
             Log.e("PlayerActivity", "Screenify resolution failed: " + e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * v2.7 BETA 1.2: Resolve Videx proxy URL to get actual M3U8 stream
+     * Flow: videx://CHANNEL_PATH -> api.videx.lol/keyvidex.php?stream=/CHANNEL_PATH
+     *       -> follows redirect -> gets signed M3U8 URL with expiry token
+     *       -> returns the signed URL for direct HLS playback
+     */
+    private String resolveVidexUrl(String videxUrl) {
+        try {
+            // Extract channel path from videx://CHANNEL_PATH
+            String channelPath = videxUrl.substring("videx://".length());
+            String apiUrl = "https://api.videx.lol/keyvidex.php?keyvidex=videx&stream=/" + channelPath;
+
+            Log.i("PlayerActivity", "Resolving Videx proxy: " + channelPath);
+
+            URL url = new URL(apiUrl);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setInstanceFollowRedirects(true);
+            conn.setConnectTimeout(15000);
+            conn.setReadTimeout(15000);
+            conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Linux; Android 11; AndroidTV) AppleWebKit/537.36");
+            conn.setRequestProperty("Accept", "application/vnd.apple.mpegurl, application/json, */*");
+
+            int responseCode = conn.getResponseCode();
+            String finalUrl = conn.getURL().toString();
+
+            // The proxy redirects to a signed M3U8 URL like:
+            // https://api.videx.lol/telefe/index.m3u8?expires=...&key=...
+            // That URL returns the actual M3U8 playlist content
+            if (responseCode == 200) {
+                String contentType = conn.getContentType();
+                // If we got redirected to an M3U8 URL, return that URL
+                if (finalUrl.contains(".m3u8")) {
+                    Log.i("PlayerActivity", "Videx resolved to M3U8: " + finalUrl);
+                    conn.disconnect();
+                    return finalUrl;
+                }
+
+                // Read the response body to check for M3U8 content
+                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                StringBuilder body = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    body.append(line);
+                }
+                reader.close();
+                conn.disconnect();
+
+                String responseBody = body.toString().trim();
+
+                // If the response is M3U8 content, return the URL (it will be fetched again by player)
+                if (responseBody.startsWith("#EXTM3U")) {
+                    Log.i("PlayerActivity", "Videx returned M3U8 content, using URL: " + finalUrl);
+                    return finalUrl;
+                }
+
+                // If response contains a URL with M3U8, extract it
+                java.util.regex.Matcher m = java.util.regex.Pattern.compile(
+                    "(https?://[^\"\\s\\\\]+\\.m3u8[^\"\\s\\\\]*)"
+                ).matcher(responseBody);
+                if (m.find()) {
+                    String m3u8Url = m.group(1).replace("\\u0026", "&");
+                    Log.i("PlayerActivity", "Videx extracted M3U8: " + m3u8Url);
+                    return m3u8Url;
+                }
+
+                Log.w("PlayerActivity", "Videx response was not M3U8: " + responseBody.substring(0, Math.min(100, responseBody.length())));
+            } else {
+                Log.w("PlayerActivity", "Videx API returned: " + responseCode);
+            }
+
+            conn.disconnect();
+            return null;
+        } catch (Exception e) {
+            Log.e("PlayerActivity", "Videx resolution failed: " + e.getMessage());
             return null;
         }
     }
