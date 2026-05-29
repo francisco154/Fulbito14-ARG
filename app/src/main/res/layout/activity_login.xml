@@ -4,80 +4,79 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:background="#0D0D0D"
-    android:padding="60dp">
+    android:background="#0A0A0A"
+    android:padding="40dp">
 
-    <!-- Logo -->
+    <!-- Logo minimalista -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="⚽"
-        android:textSize="72sp"
-        android:layout_marginBottom="20dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Fulbito14 ARG"
-        android:textSize="48sp"
+        android:text="F14"
+        android:textSize="40sp"
         android:textColor="#FF6600"
         android:textStyle="bold"
-        android:letterSpacing="0.05"
-        android:layout_marginBottom="8dp" />
+        android:letterSpacing="0.15"
+        android:layout_marginBottom="4dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="DEPORTES EN VIVO"
-        android:textSize="20sp"
-        android:textColor="#AAAAAA"
-        android:letterSpacing="0.3"
-        android:layout_marginBottom="50dp" />
+        android:text="ARG"
+        android:textSize="14sp"
+        android:textColor="#555555"
+        android:letterSpacing="0.4"
+        android:layout_marginBottom="48dp" />
 
-    <!-- User Field -->
+    <!-- Campo Usuario -->
     <EditText
         android:id="@+id/edit_user"
-        android:layout_width="600dp"
-        android:layout_height="wrap_content"
+        android:layout_width="480dp"
+        android:layout_height="56dp"
         android:hint="Usuario"
-        android:textColor="#FFFFFF"
-        android:textColorHint="#666666"
-        android:textSize="24sp"
-        android:padding="18dp"
+        android:textColor="#E0E0E0"
+        android:textColorHint="#444444"
+        android:textSize="18sp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
         android:background="@drawable/edit_text_bg"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="12dp"
         android:singleLine="true"
         android:inputType="text"
-        android:imeOptions="actionNext" />
+        android:imeOptions="actionNext"
+        android:cursorVisible="true"
+        android:textCursorDrawable="@null" />
 
-    <!-- Pass Field -->
+    <!-- Campo Contraseña -->
     <EditText
         android:id="@+id/edit_pass"
-        android:layout_width="600dp"
-        android:layout_height="wrap_content"
+        android:layout_width="480dp"
+        android:layout_height="56dp"
         android:hint="Contraseña"
-        android:textColor="#FFFFFF"
-        android:textColorHint="#666666"
-        android:textSize="24sp"
-        android:padding="18dp"
+        android:textColor="#E0E0E0"
+        android:textColorHint="#444444"
+        android:textSize="18sp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
         android:background="@drawable/edit_text_bg"
-        android:layout_marginBottom="30dp"
+        android:layout_marginBottom="28dp"
         android:singleLine="true"
         android:inputType="textPassword"
-        android:imeOptions="actionDone" />
+        android:imeOptions="actionDone"
+        android:cursorVisible="true"
+        android:textCursorDrawable="@null" />
 
-    <!-- Login Button -->
+    <!-- Botón Acceder -->
     <Button
         android:id="@+id/btn_login"
-        android:layout_width="600dp"
-        android:layout_height="wrap_content"
-        android:text="INGRESAR"
-        android:textSize="24sp"
-        android:textColor="#FFFFFF"
+        android:layout_width="480dp"
+        android:layout_height="52dp"
+        android:text="ACCEDER"
+        android:textSize="15sp"
+        android:textColor="#0A0A0A"
         android:textStyle="bold"
-        android:letterSpacing="0.1"
+        android:letterSpacing="0.15"
         android:background="@drawable/btn_primary"
-        android:padding="18dp" />
+        android:textAllCaps="true" />
 
     <!-- Error -->
     <TextView
@@ -85,9 +84,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=""
-        android:textColor="#FF3333"
-        android:textSize="20sp"
-        android:layout_marginTop="20dp"
-        android:visibility="gone" />
+        android:textColor="#FF4444"
+        android:textSize="13sp"
+        android:layout_marginTop="16dp"
+        android:visibility="gone"
+        android:alpha="0.9" />
 
 </LinearLayout>
