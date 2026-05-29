@@ -16,268 +16,47 @@
             align-items: center;
             justify-content: center;
         }
-        .container {
-            max-width: 520px;
-            padding: 40px 20px;
-            text-align: center;
-        }
-        .logo {
-            font-size: 36px;
-            font-weight: 800;
-            color: #FF6600;
-            letter-spacing: 4px;
-            margin-bottom: 2px;
-        }
-        .logo-sub {
-            font-size: 12px;
-            color: #444;
-            letter-spacing: 6px;
-            text-transform: uppercase;
-            margin-bottom: 48px;
-        }
-        .version {
-            display: inline-block;
-            border: 1px solid #333;
-            color: #888;
-            padding: 3px 14px;
-            border-radius: 20px;
-            font-size: 12px;
-            margin-bottom: 8px;
-        }
-        .badge-beta {
-            display: inline-block;
-            background: #3A2A1A;
-            color: #FF9944;
-            padding: 3px 10px;
-            border-radius: 4px;
-            font-size: 10px;
-            font-weight: 600;
-            letter-spacing: 1px;
-            margin-left: 8px;
-        }
-        .badge-stable {
-            display: inline-block;
-            background: #1A3A1A;
-            color: #4CAF50;
-            padding: 3px 10px;
-            border-radius: 4px;
-            font-size: 10px;
-            font-weight: 600;
-            letter-spacing: 1px;
-            margin-left: 8px;
-        }
-        .download-btn {
-            display: inline-block;
-            background: #FF6600;
-            color: #0A0A0A;
-            text-decoration: none;
-            padding: 16px 48px;
-            border-radius: 8px;
-            font-size: 15px;
-            font-weight: 700;
-            letter-spacing: 2px;
-            transition: all 0.2s ease;
-            margin-bottom: 6px;
-        }
-        .download-btn:hover {
-            background: #FF7722;
-            box-shadow: 0 4px 20px rgba(255, 102, 0, 0.3);
-        }
-        .download-btn.beta {
-            background: #333;
-            color: #FF9944;
-        }
-        .download-btn.beta:hover {
-            background: #444;
-            box-shadow: 0 4px 20px rgba(255, 153, 68, 0.2);
-        }
-        .file-info {
-            font-size: 12px;
-            color: #444;
-            margin-bottom: 8px;
-        }
-        .version-section {
-            margin-bottom: 24px;
-            padding-bottom: 24px;
-            border-bottom: 1px solid #1A1A1A;
-        }
-        .version-section:last-of-type {
-            border-bottom: none;
-        }
-        .whats-new {
-            text-align: left;
-            border-top: 1px solid #1A1A1A;
-            padding-top: 28px;
-            margin-bottom: 28px;
-        }
-        .whats-new h3 {
-            color: #FF6600;
-            margin-bottom: 12px;
-            font-size: 11px;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-        }
-        .whats-new ul {
-            list-style: none;
-            padding: 0;
-        }
-        .whats-new li {
-            color: #888;
-            font-size: 13px;
-            padding: 4px 0;
-            padding-left: 16px;
-            position: relative;
-        }
-        .whats-new li::before {
-            content: '+';
-            position: absolute;
-            left: 0;
-            color: #FF6600;
-            font-weight: bold;
-        }
-        .whats-new li.new-feature {
-            color: #FF9944;
-        }
-        .whats-new li.new-feature::before {
-            content: '\2605';
-            color: #FF6600;
-        }
-        .whats-new li.fix {
-            color: #4CAF50;
-        }
-        .whats-new li.fix::before {
-            content: '\2713';
-            color: #4CAF50;
-        }
-        .channels {
-            text-align: left;
-            border-top: 1px solid #1A1A1A;
-            padding-top: 28px;
-        }
-        .channels h3 {
-            color: #555;
-            margin-bottom: 14px;
-            font-size: 11px;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-        }
-        .channel-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-        .channel-tag {
-            background: #111;
-            border: 1px solid #1A1A1A;
-            color: #888;
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 12px;
-        }
-        .channel-tag.sports {
-            color: #FF6600;
-            border-color: #2A1508;
-            background: #1A0D04;
-        }
-        .channel-tag.premium {
-            color: #FF3366;
-            border-color: #2A0815;
-            background: #1A040D;
-        }
-        .channel-tag.fta {
-            color: #4CAF50;
-            border-color: #1A3A1A;
-            background: #0A1A0A;
-        }
-        .channel-tag.news {
-            color: #4488FF;
-            border-color: #0A1A3A;
-            background: #0A0D1A;
-        }
-        .channel-tag.screenify {
-            color: #CC66FF;
-            border-color: #1A0A3A;
-            background: #0D041A;
-        }
-        .channel-tag.videx {
-            color: #FF9944;
-            border-color: #3A2A1A;
-            background: #1A1008;
-        }
-        .channel-tag.regional {
-            color: #44AAAA;
-            border-color: #0A2A2A;
-            background: #0A1A1A;
-        }
-        .login-info {
-            margin-top: 28px;
-            padding-top: 28px;
-            border-top: 1px solid #1A1A1A;
-            text-align: left;
-        }
-        .login-info h3 {
-            color: #555;
-            margin-bottom: 10px;
-            font-size: 11px;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-        }
-        .login-info p {
-            color: #666;
-            font-size: 13px;
-            font-family: monospace;
-        }
-        .signing {
-            margin-top: 24px;
-            padding-top: 24px;
-            border-top: 1px solid #1A1A1A;
-            text-align: left;
-        }
-        .signing h3 {
-            color: #555;
-            margin-bottom: 10px;
-            font-size: 11px;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-        }
-        .signing p {
-            color: #444;
-            font-size: 12px;
-        }
-        .signing .check {
-            color: #4CAF50;
-        }
-        .discovery {
-            margin-top: 24px;
-            padding-top: 24px;
-            border-top: 1px solid #1A1A1A;
-            text-align: left;
-        }
-        .discovery h3 {
-            color: #CC66FF;
-            margin-bottom: 10px;
-            font-size: 11px;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-        }
-        .discovery code {
-            color: #888;
-            font-size: 11px;
-            background: #111;
-            padding: 2px 6px;
-            border-radius: 3px;
-        }
-        .discovery p {
-            color: #666;
-            font-size: 12px;
-            margin: 4px 0;
-        }
-        .footer {
-            margin-top: 48px;
-            font-size: 10px;
-            color: #333;
-            letter-spacing: 2px;
-        }
+        .container { max-width: 520px; padding: 40px 20px; text-align: center; }
+        .logo { font-size: 36px; font-weight: 800; color: #FF6600; letter-spacing: 4px; margin-bottom: 2px; }
+        .logo-sub { font-size: 12px; color: #444; letter-spacing: 6px; text-transform: uppercase; margin-bottom: 48px; }
+        .version { display: inline-block; border: 1px solid #333; color: #888; padding: 3px 14px; border-radius: 20px; font-size: 12px; margin-bottom: 8px; }
+        .badge-beta { display: inline-block; background: #3A2A1A; color: #FF9944; padding: 3px 10px; border-radius: 4px; font-size: 10px; font-weight: 600; letter-spacing: 1px; margin-left: 8px; }
+        .badge-stable { display: inline-block; background: #1A3A1A; color: #4CAF50; padding: 3px 10px; border-radius: 4px; font-size: 10px; font-weight: 600; letter-spacing: 1px; margin-left: 8px; }
+        .download-btn { display: inline-block; background: #FF6600; color: #0A0A0A; text-decoration: none; padding: 16px 48px; border-radius: 8px; font-size: 15px; font-weight: 700; letter-spacing: 2px; transition: all 0.2s ease; margin-bottom: 6px; }
+        .download-btn:hover { background: #FF7722; box-shadow: 0 4px 20px rgba(255, 102, 0, 0.3); }
+        .download-btn.beta { background: #333; color: #FF9944; }
+        .download-btn.beta:hover { background: #444; box-shadow: 0 4px 20px rgba(255, 153, 68, 0.2); }
+        .file-info { font-size: 12px; color: #444; margin-bottom: 8px; }
+        .version-section { margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid #1A1A1A; }
+        .version-section:last-of-type { border-bottom: none; }
+        .whats-new { text-align: left; border-top: 1px solid #1A1A1A; padding-top: 28px; margin-bottom: 28px; }
+        .whats-new h3 { color: #FF6600; margin-bottom: 12px; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; }
+        .whats-new ul { list-style: none; padding: 0; }
+        .whats-new li { color: #888; font-size: 13px; padding: 4px 0; padding-left: 16px; position: relative; }
+        .whats-new li::before { content: '+'; position: absolute; left: 0; color: #FF6600; font-weight: bold; }
+        .whats-new li.new-feature { color: #FF9944; }
+        .whats-new li.new-feature::before { content: '\2605'; color: #FF6600; }
+        .whats-new li.fix { color: #4CAF50; }
+        .whats-new li.fix::before { content: '\2713'; color: #4CAF50; }
+        .channels { text-align: left; border-top: 1px solid #1A1A1A; padding-top: 28px; }
+        .channels h3 { color: #555; margin-bottom: 14px; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; }
+        .channel-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+        .channel-tag { background: #111; border: 1px solid #1A1A1A; color: #888; padding: 4px 10px; border-radius: 4px; font-size: 12px; }
+        .channel-tag.sports { color: #FF6600; border-color: #2A1508; background: #1A0D04; }
+        .channel-tag.fta { color: #4CAF50; border-color: #1A3A1A; background: #0A1A0A; }
+        .channel-tag.news { color: #4488FF; border-color: #0A1A3A; background: #0A0D1A; }
+        .channel-tag.screenify { color: #CC66FF; border-color: #1A0A3A; background: #0D041A; }
+        .channel-tag.videx { color: #FF9944; border-color: #3A2A1A; background: #1A1008; }
+        .channel-tag.regional { color: #44AAAA; border-color: #0A2A2A; background: #0A1A1A; }
+        .channel-tag.youtube { color: #FF4444; border-color: #3A1A1A; background: #1A0A0A; }
+        .login-info { margin-top: 28px; padding-top: 28px; border-top: 1px solid #1A1A1A; text-align: left; }
+        .login-info h3 { color: #555; margin-bottom: 10px; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; }
+        .login-info p { color: #666; font-size: 13px; font-family: monospace; }
+        .signing { margin-top: 24px; padding-top: 24px; border-top: 1px solid #1A1A1A; text-align: left; }
+        .signing h3 { color: #555; margin-bottom: 10px; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; }
+        .signing p { color: #444; font-size: 12px; }
+        .signing .check { color: #4CAF50; }
+        .footer { margin-top: 48px; font-size: 10px; color: #333; letter-spacing: 2px; }
     </style>
 </head>
 <body>
@@ -285,11 +64,11 @@
         <div class="logo">F14</div>
         <div class="logo-sub">Argentina</div>
 
-        <!-- BETA 1.2 -->
+        <!-- BETA 1.3 -->
         <div class="version-section">
-            <div class="version">v2.7 BETA 1.2 <span class="badge-beta">BETA</span></div>
+            <div class="version">v2.7 BETA 1.3 <span class="badge-beta">BETA</span></div>
             <br><br>
-            <a href="https://github.com/francisco154/Fulbito14-ARG/releases/download/v2.7-beta1.2/fulbito14-ARG-v2.7-BETA-1.2.apk" class="download-btn beta">
+            <a href="https://github.com/francisco154/Fulbito14-ARG/releases/download/v2.7-beta1.3/fulbito14-ARG-v2.7-BETA-1.3.apk" class="download-btn beta">
                 DESCARGAR BETA
             </a>
             <div class="file-info">12 MB &middot; APK &middot; Android 5.0+</div>
@@ -306,25 +85,15 @@
         </div>
 
         <div class="whats-new">
-            <h3>Nuevo en BETA 1.2</h3>
+            <h3>Nuevo en BETA 1.3</h3>
             <ul>
-                <li class="fix">TV Publica: Reemplazado YouTube por stream directo arcast.com.ar</li>
-                <li class="fix">TELEFE: Reemplazado Screenify CDN por Videx proxy (non-CDN)</li>
-                <li class="fix">El Trece: URL actualizada (la anterior daba 403)</li>
-                <li class="fix">Telemax: URL actualizada a telecentro.net.ar</li>
-                <li class="new-feature">+4 Canales Regionales: Canal 26, Litus TV, Canal 3, Canal 10</li>
-                <li class="new-feature">Protocolo Videx proxy (videx://) para streams sin CDN</li>
+                <li class="fix">DeporTV: streamlock muerto, ahora via Videx proxy</li>
+                <li class="fix">TELEFE: contenido incorrecto, ahora M3U8 directo alsolnet</li>
+                <li class="fix">TN en Vivo: DASH no andaba, ahora M3U8 HD (1080p!)</li>
+                <li class="fix">Login: recuerda credenciales, no pide login al reabrir</li>
+                <li class="new-feature">Buffer alto (50s/60s) para streaming sin cortes</li>
                 <li>Firma V1+V2+V3 verificada</li>
-                <li>24 canales totales</li>
             </ul>
-        </div>
-
-        <div class="discovery">
-            <h3>Protocolos de Stream</h3>
-            <p>1. <code>screenify://</code> &rarr; ESPN Premium, TNT Sports (CDN)</p>
-            <p>2. <code>videx://</code> &rarr; TELEFE (proxy non-CDN)</p>
-            <p>3. <code>.m3u8</code> &rarr; Streams HLS directos</p>
-            <p>4. <code>.mpd</code> &rarr; TN en Vivo (DASH)</p>
         </div>
 
         <div class="channels">
@@ -339,7 +108,7 @@
             <h3>Deportes</h3>
             <div class="channel-grid">
                 <span class="channel-tag sports">TyC Sports</span>
-                <span class="channel-tag sports">DeporTV</span>
+                <span class="channel-tag videx">DeporTV</span>
                 <span class="channel-tag sports">FIFA+</span>
                 <span class="channel-tag sports">Pluto TV Futbol</span>
                 <span class="channel-tag sports">Teletrak</span>
@@ -350,7 +119,7 @@
             <h3>Entretenimiento</h3>
             <div class="channel-grid">
                 <span class="channel-tag fta">El Trece</span>
-                <span class="channel-tag videx">TELEFE</span>
+                <span class="channel-tag fta">TELEFE</span>
                 <span class="channel-tag fta">Canal 9</span>
                 <span class="channel-tag fta">America TV</span>
                 <span class="channel-tag fta">Bravo TV</span>
@@ -366,13 +135,13 @@
                 <span class="channel-tag news">A24</span>
                 <span class="channel-tag news">TN en Vivo</span>
                 <span class="channel-tag news">TV Publica</span>
-                <span class="channel-tag news">C5N</span>
-                <span class="channel-tag news">LN+</span>
+                <span class="channel-tag youtube">C5N (YouTube)</span>
+                <span class="channel-tag youtube">LN+ (YouTube)</span>
             </div>
         </div>
 
         <div class="channels">
-            <h3>Regionales (NUEVO)</h3>
+            <h3>Regionales</h3>
             <div class="channel-grid">
                 <span class="channel-tag regional">Canal 26</span>
                 <span class="channel-tag regional">Litus TV</span>
@@ -394,7 +163,7 @@
             <p><span class="check">&#10003;</span> V3 (APK Signature Scheme v3)</p>
         </div>
 
-        <div class="footer">NATIVE ANDROID TV &middot; DASH + HLS + SCREENIFY CDN + VIDEX PROXY &middot; 24 CANALES</div>
+        <div class="footer">NATIVE ANDROID TV &middot; HLS + DASH + SCREENIFY CDN + VIDEX PROXY &middot; 24 CANALES &middot; AUTO-LOGIN</div>
     </div>
 </body>
 </html>
