@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 /**
  * Login screen - minimalist and professional
- * Simple: Usuario + Contraseña + Acceder
+ * v2.2: Same minimalist v2.1 design, uses ChannelStore for credentials
  */
 public class LoginActivity extends Activity {
 
@@ -79,7 +79,7 @@ public class LoginActivity extends Activity {
             return;
         }
 
-        if (user.equals(ChannelData.USERNAME) && pass.equals(ChannelData.PASSWORD)) {
+        if (user.equals(ChannelStore.USERNAME) && pass.equals(ChannelStore.PASSWORD)) {
             errorText.setVisibility(View.GONE);
             Intent intent = new Intent(this, ChannelListActivity.class);
             intent.putExtra("username", user);

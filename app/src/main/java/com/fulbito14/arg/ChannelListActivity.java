@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -18,10 +19,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
- * Channel list screen - shows all available channels
- * v1.5: Improved focus handling, better colors for selected item
+ * Channel list screen - shows channels from M3U playlists
+ * v2.2: Fetches channels dynamically from iptv-org + other community sources
  */
 public class ChannelListActivity extends Activity {
 
@@ -35,18 +38,24 @@ public class ChannelListActivity extends Activity {
     private View overlayContainer;
     private TextView overlayNumber;
     private ScrollView scrollView;
+    private View loadingContainer;
+    private ProgressBar loadingBar;
+    private TextView loadingText;
+    private ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_channel_list);
 
-        channels = ChannelData.getChannels();
         channelContainer = findViewById(R.id.channel_container);
         scrollView = findViewById(R.id.scroll_view);
         clockText = findViewById(R.id.text_clock);
         overlayNumber = findViewById(R.id.overlay_number);
         overlayContainer = findViewById(R.id.overlay_container);
+        loadingContainer = findViewById(R.id.loading_container);
+        loadingBar = findViewById(R.id.loading_bar);
+        loadingText = findViewById(R.id.loading_text);
 
         String username = getIntent().getStringExtra("username");
         TextView userText = findViewById(R.id.text_user);
@@ -54,8 +63,79 @@ public class ChannelListActivity extends Activity {
             userText.setText(username != null ? username : "");
         }
 
-        renderChannels();
         updateClock();
+
+        // Load channels - try cache first, then fetch fresh in background
+        channels = ChannelStore.getChannels(this);
+
+        if (channels != null && !channels.isEmpty()) {
+            showChannels();
+            // Refresh in background
+            fetchChannelsInBackground();
+        } else {
+            showLoading();
+            fetchChannelsSync();
+        }
+    }
+
+    private void showLoading() {
+        loadingContainer.setVisibility(View.VISIBLE);
+        scrollView.setVisibility(View.GONE);
+    }
+
+    private void hideLoading() {
+        loadingContainer.setVisibility(View.GONE);
+        scrollView.setVisibility(View.VISIBLE);
+    }
+
+    private void fetchChannelsSync() {
+        executor.execute(() -> {
+            List<Channel> freshChannels = ChannelStore.fetchFreshChannels(this);
+
+            handler.post(() -> {
+                if (freshChannels != null && !freshChannels.isEmpty()) {
+                    channels = freshChannels;
+                    hideLoading();
+                    renderChannels();
+
+                    handler.postDelayed(() -> {
+                        if (channelContainer.getChildCount() > 0) {
+                            setFocus(0);
+                        }
+                    }, 300);
+                } else {
+                    // Even fresh fetch failed, use built-in
+                    channels = ChannelStore.getChannels(this);
+                    hideLoading();
+                    renderChannels();
+
+                    handler.postDelayed(() -> {
+                        if (channelContainer.getChildCount() > 0) {
+                            setFocus(0);
+                        }
+                    }, 300);
+                }
+            });
+        });
+    }
+
+    private void fetchChannelsInBackground() {
+        executor.execute(() -> {
+            List<Channel> freshChannels = ChannelStore.fetchFreshChannels(this);
+
+            handler.post(() -> {
+                if (freshChannels != null && !freshChannels.isEmpty() &&
+                    (channels == null || freshChannels.size() > channels.size())) {
+                    channels = freshChannels;
+                    renderChannels();
+                }
+            });
+        });
+    }
+
+    private void showChannels() {
+        hideLoading();
+        renderChannels();
 
         handler.postDelayed(() -> {
             if (channelContainer.getChildCount() > 0) {
@@ -66,10 +146,29 @@ public class ChannelListActivity extends Activity {
 
     private void renderChannels() {
         channelContainer.removeAllViews();
+        if (channels == null || channels.isEmpty()) return;
+
         LayoutInflater inflater = getLayoutInflater();
+        String lastCategory = "";
 
         for (int i = 0; i < channels.size(); i++) {
             Channel ch = channels.get(i);
+
+            // Add category separator if category changed
+            if (ch.category != null && !ch.category.equals(lastCategory)) {
+                lastCategory = ch.category;
+                View separator = inflater.inflate(R.layout.channel_card, (ViewGroup) channelContainer, false);
+
+                // Create a section header
+                TextView header = new TextView(this);
+                header.setText(ch.category.toUpperCase());
+                header.setTextColor(Color.parseColor("#FF6600"));
+                header.setTextSize(14);
+                header.setPadding(0, 20, 0, 8);
+                header.setFocusable(false);
+                channelContainer.addView(header);
+            }
+
             View card = inflater.inflate(R.layout.channel_card, (ViewGroup) channelContainer, false);
 
             TextView numText = card.findViewById(R.id.card_number);
@@ -82,14 +181,19 @@ public class ChannelListActivity extends Activity {
 
             numText.setText(String.valueOf(ch.number));
             nameText.setText(ch.name);
-            catText.setText(ch.category);
-            countryText.setText(ch.country);
+            catText.setText(ch.category != null ? ch.category : "");
+            countryText.setText(ch.country != null ? ch.country : "");
 
             int bgColor = getLogoColor(ch.logoKey);
             logoBg.setBackgroundColor(bgColor);
             logoAbbr.setText(getLogoAbbr(ch.logoKey));
 
-            if (ch.isPremium()) {
+            if (ch.isSport()) {
+                badge.setVisibility(View.VISIBLE);
+                badge.setText("EN VIVO");
+                badge.setBackgroundColor(Color.parseColor("#FF3333"));
+                badge.setTextColor(Color.WHITE);
+            } else if (ch.isPremium()) {
                 badge.setVisibility(View.VISIBLE);
                 badge.setText("PREMIUM");
                 badge.setBackgroundColor(Color.parseColor("#FFD700"));
@@ -121,6 +225,16 @@ public class ChannelListActivity extends Activity {
             case "tyc": return Color.parseColor("#117A65");
             case "win": return Color.parseColor("#D4AC0D");
             case "tudn": return Color.parseColor("#2E86C1");
+            case "telefe": return Color.parseColor("#1A8B37");
+            case "trece": return Color.parseColor("#C0392B");
+            case "america": return Color.parseColor("#2471A3");
+            case "canal9": return Color.parseColor("#7D3C98");
+            case "publica": return Color.parseColor("#2E86C1");
+            case "deportv": return Color.parseColor("#117A65");
+            case "tn": return Color.parseColor("#2C3E50");
+            case "globo": return Color.parseColor("#1A5276");
+            case "sportv": return Color.parseColor("#D00000");
+            case "band": return Color.parseColor("#C0392B");
             default: return Color.parseColor("#884400");
         }
     }
@@ -135,44 +249,66 @@ public class ChannelListActivity extends Activity {
             case "tyc": return "TyC";
             case "win": return "WIN";
             case "tudn": return "TUDN";
+            case "telefe": return "TLF";
+            case "trece": return "13";
+            case "america": return "AM";
+            case "canal9": return "9";
+            case "publica": return "TVP";
+            case "deportv": return "DTV";
+            case "tn": return "TN";
+            case "globo": return "GLB";
+            case "sportv": return "SPV";
+            case "band": return "BND";
             default: return "TV";
         }
     }
 
     private void setFocus(int index) {
-        if (index < 0 || index >= channelContainer.getChildCount()) return;
+        if (channelContainer == null) return;
+        // Count only focusable children (skip headers)
+        int focusableCount = 0;
+        for (int i = 0; i < channelContainer.getChildCount(); i++) {
+            if (channelContainer.getChildAt(i).isFocusable()) focusableCount++;
+        }
+        if (focusableCount == 0) return;
+        if (index < 0) index = 0;
+        if (index >= channels.size()) index = channels.size() - 1;
+
         focusedIndex = index;
 
+        // Find the actual child view for this channel index
+        int viewIndex = 0;
+        int channelCount = 0;
         for (int i = 0; i < channelContainer.getChildCount(); i++) {
             View child = channelContainer.getChildAt(i);
-            if (i == index) {
+            if (!child.isFocusable()) continue; // Skip headers
+            if (channelCount == index) {
                 child.setBackgroundColor(Color.parseColor("#2A1508"));
                 child.setTranslationX(10f);
+                child.requestFocus();
+                if (scrollView != null) scrollView.smoothScrollTo(0, child.getTop() - 100);
             } else {
                 child.setBackgroundColor(Color.parseColor("#141414"));
                 child.setTranslationX(0f);
             }
-        }
-
-        View focused = channelContainer.getChildAt(index);
-        if (focused != null) {
-            focused.requestFocus();
-            scrollView.smoothScrollTo(0, focused.getTop() - 100);
+            channelCount++;
         }
     }
 
     private void playChannel(int index) {
+        if (channels == null || index < 0 || index >= channels.size()) return;
         Channel ch = channels.get(index);
         Intent intent = new Intent(this, PlayerActivity.class);
         intent.putExtra("channel_index", index);
         intent.putExtra("channel_name", ch.name);
         intent.putExtra("channel_number", ch.number);
-        intent.putExtra("embed_url", ch.embedUrl);
-        intent.putExtra("embed_backup", ch.embedBackup);
+        intent.putExtra("stream_url", ch.streamUrl);
+        intent.putExtra("channel_category", ch.category != null ? ch.category : "");
         startActivity(intent);
     }
 
     private void updateClock() {
+        if (clockText == null) return;
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
         clockText.setText(sdf.format(new Date()));
         handler.postDelayed(this::updateClock, 10000);
@@ -232,7 +368,7 @@ public class ChannelListActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (focusedIndex >= 0 && focusedIndex < channelContainer.getChildCount()) {
+        if (focusedIndex >= 0 && channelContainer != null) {
             setFocus(focusedIndex);
         }
     }
@@ -241,5 +377,6 @@ public class ChannelListActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         handler.removeCallbacksAndMessages(null);
+        executor.shutdownNow();
     }
 }

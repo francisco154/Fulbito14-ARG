@@ -1,7 +1,8 @@
 package com.fulbito14.arg;
 
 /**
- * Channel data model - each sports channel
+ * Channel data model for M3U-parsed channels
+ * v2.2: Direct M3U8 URLs from community playlists (iptv-org, radiosargentina, m3u.cl)
  */
 public class Channel {
     public int id;
@@ -10,24 +11,32 @@ public class Channel {
     public String category;
     public String country;
     public String logoKey;
-    public String embedUrl;
-    public String embedBackup;
+    public String streamUrl;      // Direct M3U8/HLS URL
+    public String logoUrl;        // Channel logo URL from M3U metadata
     public String description;
+    public String source;         // Which playlist this came from
 
     public Channel(int id, String name, int number, String category, String country,
-                   String logoKey, String embedUrl, String embedBackup, String description) {
+                   String logoKey, String streamUrl, String logoUrl, String description, String source) {
         this.id = id;
         this.name = name;
         this.number = number;
         this.category = category;
         this.country = country;
         this.logoKey = logoKey;
-        this.embedUrl = embedUrl;
-        this.embedBackup = embedBackup;
+        this.streamUrl = streamUrl;
+        this.logoUrl = logoUrl;
         this.description = description;
+        this.source = source;
     }
 
     public boolean isPremium() {
         return category != null && category.contains("Premium");
+    }
+
+    public boolean isSport() {
+        if (category == null) return false;
+        String cat = category.toLowerCase();
+        return cat.contains("sport") || cat.contains("deporte") || cat.contains("futbol") || cat.contains("football");
     }
 }

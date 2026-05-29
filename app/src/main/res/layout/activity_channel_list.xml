@@ -31,6 +31,16 @@
             android:textStyle="bold"
             android:layout_marginLeft="12dp" />
 
+        <TextView
+            android:id="@+id/channel_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="14sp"
+            android:textColor="#FF6600"
+            android:layout_marginLeft="16dp"
+            android:alpha="0.8" />
+
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -54,6 +64,33 @@
             android:textColor="#FFFFFF"
             android:alpha="0.7"
             android:layout_marginLeft="30dp" />
+    </LinearLayout>
+
+    <!-- Loading State -->
+    <LinearLayout
+        android:id="@+id/loading_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:id="@+id/loading_bar"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:indeterminate="true"
+            android:indeterminateTint="#FF6600" />
+
+        <TextView
+            android:id="@+id/loading_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cargando canales..."
+            android:textSize="18sp"
+            android:textColor="#AAAAAA"
+            android:layout_marginTop="16dp" />
     </LinearLayout>
 
     <!-- Channel List (ScrollView + LinearLayout) -->

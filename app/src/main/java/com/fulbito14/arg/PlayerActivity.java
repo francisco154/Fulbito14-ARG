@@ -1,8 +1,6 @@
 package com.fulbito14.arg;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,18 +14,17 @@ import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.source.DefaultMediaSourceFactory;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
 
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
- * Player screen - uses ExoPlayer for native HLS playback
- * v1.5 FIX: Now passes Referer header via DefaultHttpDataSource
- * fubohd.com M3U8 streams REQUIRE a Referer header to work (403 without it)
+ * Player screen - uses ExoPlayer for native HLS/DASH playback
+ * v2.2: Plays direct M3U8 URLs from iptv-org playlists
+ * No more embed extraction needed - streams are direct URLs
  */
 public class PlayerActivity extends Activity {
 
@@ -35,6 +32,7 @@ public class PlayerActivity extends Activity {
     private PlayerView playerView;
     private TextView channelName;
     private TextView channelNumber;
+    private TextView channelCategory;
     private TextView statusText;
     private ProgressBar progressBar;
     private View overlayControls;
@@ -45,10 +43,9 @@ public class PlayerActivity extends Activity {
     private List<Channel> channels;
     private int currentChannelIndex;
     private Handler handler = new Handler(Looper.getMainLooper());
-    private ExecutorService executor = Executors.newSingleThreadExecutor();
     private Runnable overlayTimeout;
     private int retryCount = 0;
-    private static final int MAX_RETRIES = 3;
+    private static final int MAX_RETRIES = 2;
     private boolean isDestroyed = false;
 
     @Override
@@ -56,12 +53,13 @@ public class PlayerActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
 
-        channels = ChannelData.getChannels();
+        channels = ChannelStore.getChannelsSync();
         currentChannelIndex = getIntent().getIntExtra("channel_index", 0);
 
         playerView = findViewById(R.id.player_view);
         channelName = findViewById(R.id.player_channel_name);
         channelNumber = findViewById(R.id.player_channel_number);
+        channelCategory = findViewById(R.id.player_channel_category);
         statusText = findViewById(R.id.player_status);
         progressBar = findViewById(R.id.player_progress);
         overlayControls = findViewById(R.id.player_overlay);
@@ -112,90 +110,33 @@ public class PlayerActivity extends Activity {
     }
 
     private void loadChannel(int index) {
-        if (index < 0 || index >= channels.size()) return;
+        if (channels == null || index < 0 || index >= channels.size()) return;
         currentChannelIndex = index;
         retryCount = 0;
 
         Channel ch = channels.get(index);
         channelNumber.setText(String.valueOf(ch.number));
         channelName.setText(ch.name);
+        if (channelCategory != null) {
+            channelCategory.setText(ch.category != null ? ch.category : "");
+        }
         statusText.setText("Conectando...");
         progressBar.setVisibility(View.VISIBLE);
         errorView.setVisibility(View.GONE);
         showOverlay();
 
-        extractAndPlay(ch.embedUrl, ch.embedBackup);
-    }
-
-    private void extractAndPlay(String primaryUrl, String backupUrl) {
-        executor.execute(() -> {
-            // Use the new method that returns the referer
-            M3U8Extractor.ExtractResult result = M3U8Extractor.extractM3U8WithReferer(primaryUrl, backupUrl);
-
-            if (result == null) {
-                // Try ksdjugfsddeports as additional fallback
-                Channel ch = channels.get(currentChannelIndex);
-                String ksdSlug = getKsdSlug(ch.name);
-                if (ksdSlug != null) {
-                    String ksdUrl = "https://deportes.ksdjugfsddeports.com/stream.php?canal=" + ksdSlug + "&target=2";
-                    result = M3U8Extractor.extractFromUrlWithReferer(ksdUrl);
-                }
-            }
-
-            // Try all la14hd.com slugs as final fallback for channels that failed
-            if (result == null) {
-                Channel ch = channels.get(currentChannelIndex);
-                String[] fallbackSlugs = getFallbackSlugs(ch.name);
-                for (String slug : fallbackSlugs) {
-                    String fbUrl = "https://la14hd.com/vivo/canales.php?stream=" + slug;
-                    result = M3U8Extractor.extractFromUrlWithReferer(fbUrl);
-                    if (result != null) break;
-                }
-            }
-
-            final M3U8Extractor.ExtractResult finalResult = result;
-            handler.post(() -> {
-                if (isDestroyed) return;
-                if (finalResult != null) {
-                    playStream(finalResult.m3u8Url, finalResult.referer);
-                } else {
-                    handleError();
-                }
-            });
-        });
+        playStream(ch.streamUrl);
     }
 
     /**
-     * Get fallback slugs for channels that might have different names on different sources
+     * Play a direct M3U8/HLS stream URL
+     * v2.2: No more embed extraction - direct stream URLs from M3U playlists
      */
-    private String[] getFallbackSlugs(String name) {
-        if (name == null) return new String[0];
-        if (name.contains("Fox Sports 1")) return new String[]{"fox1ar", "foxsports1", "fox1"};
-        if (name.contains("Fox Sports 2 AR")) return new String[]{"fox2ar", "foxsports2ar"};
-        if (name.contains("DSports 2")) return new String[]{"dsports2", "dsports2ar"};
-        if (name.contains("DirecTV Sports")) return new String[]{"directvsports", "directv", "dsports"};
-        if (name.contains("TNT Sports Premium")) return new String[]{"tntsportspremium", "tntpremium"};
-        if (name.contains("TUDN USA")) return new String[]{"tudn_usa", "tudnusa", "tudn"};
-        return new String[0];
-    }
-
-    private String getKsdSlug(String name) {
-        if (name == null) return null;
-        if (name.contains("ESPN Premium")) return "espnpremium";
-        if (name.contains("ESPN")) return name.toLowerCase().replace(" ", "").replace("espn", "espn");
-        if (name.contains("Fox Sports")) return "foxsports";
-        if (name.contains("DSports") || name.contains("DirecTV")) return "directvsports";
-        if (name.contains("TNT")) return "tntsports";
-        if (name.contains("TyC")) return "tycsports";
-        return null;
-    }
-
-    /**
-     * v1.5 FIX: Now passes Referer header to ExoPlayer via DefaultHttpDataSource
-     * This is CRITICAL - fubohd.com streams return 403 without a valid Referer
-     */
-    private void playStream(String m3u8Url, String referer) {
-        if (player == null || isDestroyed) return;
+    private void playStream(String streamUrl) {
+        if (player == null || isDestroyed || streamUrl == null || streamUrl.isEmpty()) {
+            handleError();
+            return;
+        }
 
         DefaultHttpDataSource.Factory dataSourceFactory = new DefaultHttpDataSource.Factory()
                 .setUserAgent("Mozilla/5.0 (Linux; Android 11; AndroidTV) AppleWebKit/537.36")
@@ -203,36 +144,68 @@ public class PlayerActivity extends Activity {
                 .setConnectTimeoutMs(15000)
                 .setReadTimeoutMs(15000);
 
-        // CRITICAL FIX: Set Referer header for all requests made by ExoPlayer
-        // This includes the M3U8 playlist AND all TS segment requests
-        if (referer != null && !referer.isEmpty()) {
+        // For HLS streams, set Referer to help with some servers
+        String referer = extractReferer(streamUrl);
+        if (referer != null) {
             dataSourceFactory.setDefaultRequestProperties(java.util.Map.of(
                     "Referer", referer,
                     "Origin", referer.endsWith("/") ? referer.substring(0, referer.length() - 1) : referer
             ));
         }
 
-        HlsMediaSource hlsSource = new HlsMediaSource.Factory(dataSourceFactory)
-                .createMediaSource(MediaItem.fromUri(Uri.parse(m3u8Url)));
+        Uri uri = Uri.parse(streamUrl);
 
-        player.setMediaSource(hlsSource);
+        if (streamUrl.contains(".m3u8") || streamUrl.contains(".m3u")) {
+            // HLS stream
+            HlsMediaSource hlsSource = new HlsMediaSource.Factory(dataSourceFactory)
+                    .createMediaSource(MediaItem.fromUri(uri));
+            player.setMediaSource(hlsSource);
+        } else if (streamUrl.contains(".mpd")) {
+            // DASH stream
+            DefaultMediaSourceFactory mediaSourceFactory = new DefaultMediaSourceFactory(this)
+                    .setDataSourceFactory(dataSourceFactory);
+            player.setMediaSource(mediaSourceFactory.createMediaSource(MediaItem.fromUri(uri)));
+        } else {
+            // Progressive / other - try HLS first as most iptv-org streams are HLS
+            HlsMediaSource hlsSource = new HlsMediaSource.Factory(dataSourceFactory)
+                    .createMediaSource(MediaItem.fromUri(uri));
+            player.setMediaSource(hlsSource);
+        }
+
         player.prepare();
         player.setPlayWhenReady(true);
+    }
+
+    /**
+     * Extract a reasonable Referer from the stream URL
+     */
+    private String extractReferer(String url) {
+        if (url == null) return null;
+        try {
+            Uri uri = Uri.parse(url);
+            String scheme = uri.getScheme();
+            String host = uri.getHost();
+            if (scheme != null && host != null) {
+                return scheme + "://" + host + "/";
+            }
+        } catch (Exception e) {
+            // Ignore
+        }
+        return null;
     }
 
     private void handleError() {
         retryCount++;
         if (retryCount <= MAX_RETRIES) {
-            Channel ch = channels.get(currentChannelIndex);
             statusText.setText("Error - Reintentando...");
             errorView.setVisibility(View.VISIBLE);
             errorText.setText("Error de conexion");
-            errorHint.setText("Intentando enlace alternativo (" + retryCount + "/" + MAX_RETRIES + ")...");
+            errorHint.setText("Reintentando (" + retryCount + "/" + MAX_RETRIES + ")...");
 
             handler.postDelayed(() -> {
-                if (!isDestroyed) {
-                    // Swap primary/backup on retry
-                    extractAndPlay(ch.embedBackup, ch.embedUrl);
+                if (!isDestroyed && channels != null && currentChannelIndex < channels.size()) {
+                    Channel ch = channels.get(currentChannelIndex);
+                    playStream(ch.streamUrl);
                 }
             }, 2000);
         } else {
@@ -240,8 +213,6 @@ public class PlayerActivity extends Activity {
             errorView.setVisibility(View.VISIBLE);
             errorText.setText("Sin senal");
             errorHint.setText("Presione ATRAS para volver");
-
-            // Don't auto-return, let user try another channel
         }
     }
 
@@ -264,11 +235,11 @@ public class PlayerActivity extends Activity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_DPAD_UP:
-                if (currentChannelIndex > 0) loadChannel(currentChannelIndex - 1);
+                if (channels != null && currentChannelIndex > 0) loadChannel(currentChannelIndex - 1);
                 showOverlay();
                 return true;
             case KeyEvent.KEYCODE_DPAD_DOWN:
-                if (currentChannelIndex < channels.size() - 1) loadChannel(currentChannelIndex + 1);
+                if (channels != null && currentChannelIndex < channels.size() - 1) loadChannel(currentChannelIndex + 1);
                 showOverlay();
                 return true;
             case KeyEvent.KEYCODE_DPAD_CENTER:
@@ -282,19 +253,6 @@ public class PlayerActivity extends Activity {
             case KeyEvent.KEYCODE_BACK:
             case KeyEvent.KEYCODE_ESCAPE:
                 goBack();
-                return true;
-            case KeyEvent.KEYCODE_0: case KeyEvent.KEYCODE_1: case KeyEvent.KEYCODE_2:
-            case KeyEvent.KEYCODE_3: case KeyEvent.KEYCODE_4: case KeyEvent.KEYCODE_5:
-            case KeyEvent.KEYCODE_6: case KeyEvent.KEYCODE_7: case KeyEvent.KEYCODE_8:
-            case KeyEvent.KEYCODE_9:
-                int chNum = keyCode - KeyEvent.KEYCODE_0;
-                for (int i = 0; i < channels.size(); i++) {
-                    if (channels.get(i).number == chNum) {
-                        loadChannel(i);
-                        break;
-                    }
-                }
-                showOverlay();
                 return true;
         }
         return super.onKeyDown(keyCode, event);
@@ -320,7 +278,6 @@ public class PlayerActivity extends Activity {
             player.release();
             player = null;
         }
-        executor.shutdownNow();
         super.onDestroy();
     }
 }
