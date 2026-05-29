@@ -123,44 +123,8 @@
             color: #FF9944;
         }
         .whats-new li.new-feature::before {
-            content: '★';
+            content: '\2605';
             color: #FF6600;
-        }
-        .sources {
-            text-align: left;
-            border-top: 1px solid #1A1A1A;
-            padding-top: 28px;
-            margin-bottom: 28px;
-        }
-        .sources h3 {
-            color: #555;
-            margin-bottom: 12px;
-            font-size: 11px;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-        }
-        .source-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-        .source-tag {
-            background: #111;
-            border: 1px solid #1A1A1A;
-            color: #888;
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 12px;
-        }
-        .source-tag.active {
-            color: #4CAF50;
-            border-color: #1A3A1A;
-            background: #0A1A0A;
-        }
-        .source-tag.xc {
-            color: #FF6600;
-            border-color: #2A1508;
-            background: #1A0D04;
         }
         .channels {
             text-align: left;
@@ -192,10 +156,20 @@
             border-color: #2A1508;
             background: #1A0D04;
         }
+        .channel-tag.premium {
+            color: #FF3366;
+            border-color: #2A0815;
+            background: #1A040D;
+        }
         .channel-tag.fta {
             color: #4CAF50;
             border-color: #1A3A1A;
             background: #0A1A0A;
+        }
+        .channel-tag.news {
+            color: #4488FF;
+            border-color: #0A1A3A;
+            background: #0A0D1A;
         }
         .login-info {
             margin-top: 28px;
@@ -214,16 +188,6 @@
             color: #666;
             font-size: 13px;
             font-family: monospace;
-        }
-        .login-info .xc-mode {
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px solid #1A1A1A;
-        }
-        .login-info .xc-mode p {
-            color: #FF6600;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            font-size: 12px;
         }
         .signing {
             margin-top: 24px;
@@ -257,64 +221,57 @@
     <div class="container">
         <div class="logo">F14</div>
         <div class="logo-sub">Argentina</div>
-        <div class="version">v2.4 <span class="badge-new">NEW</span></div>
+        <div class="version">v2.5 <span class="badge-new">NEW</span></div>
         <br>
-        <a href="https://github.com/francisco154/Fulbito14-ARG/releases/download/v2.4/Fulbito14-ARG-v2.4.apk" class="download-btn">
+        <a href="https://github.com/francisco154/Fulbito14-ARG/releases/download/v2.5/fulbito14-arg-v2.5.apk" class="download-btn">
             DESCARGAR
         </a>
-        <div class="file-info">8.4 MB &middot; APK &middot; Android 5.0+</div>
+        <div class="file-info">11.3 MB &middot; APK &middot; Android 5.0+</div>
 
         <div class="whats-new">
-            <h3>Nuevo en v2.4</h3>
+            <h3>Nuevo en v2.5</h3>
             <ul>
-                <li class="new-feature">Soporte Xtream Codes API - Conecta cualquier servidor IPTV</li>
-                <li class="new-feature">Login dual: Classic o Servidor XC</li>
-                <li class="new-feature">5 nuevas fuentes M3U (Brasil, Chile, Colombia, Mexico, Sudamerica)</li>
-                <li class="new-feature">Soporte EXTVLCOPT para User-Agent personalizado</li>
-                <li>6 nuevos canales builtin (DirecTV Sports, Pluto TV, Teletrak, A24, etc.)</li>
-                <li>PlayerActivity usa User-Agent personalizado cuando disponible</li>
-                <li>ChannelStore fusiona canales XC + M3U con deduplicacion</li>
-                <li>Mejor cobertura de canales deportivos latinoamericanos</li>
+                <li class="new-feature">DirecTV Sport Argentina (DASH stream)</li>
+                <li class="new-feature">ESPN Premium ARG (DASH stream)</li>
+                <li class="new-feature">Soporte DASH/MPD para ExoPlayer (TN, DirecTV)</li>
+                <li class="new-feature">Telefe API Resolver - resuelve URL automaticamente</li>
+                <li>Telemax - Nuevo CDN confirmado funcionando</li>
+                <li>TN en Vivo - Ahora via DASH (latamlive.net)</li>
+                <li>15 canales en total: 7 Deportes + 6 Entretenimiento + 2 Noticias</li>
+                <li>Firma V1+V2+V3 verificada</li>
             </ul>
         </div>
 
-        <div class="sources">
-            <h3>Fuentes de contenido</h3>
-            <div class="source-grid">
-                <span class="source-tag active">iptv-org Argentina</span>
-                <span class="source-tag active">iptv-org Sports</span>
-                <span class="source-tag active">iptv-org Spanish</span>
-                <span class="source-tag active">iptv-org Sudamerica</span>
-                <span class="source-tag active">iptv-org Brasil</span>
-                <span class="source-tag active">iptv-org Chile</span>
-                <span class="source-tag active">iptv-org Colombia</span>
-                <span class="source-tag active">iptv-org Mexico</span>
-                <span class="source-tag active">radiosargentina</span>
-                <span class="source-tag xc">Xtream Codes API</span>
-            </div>
-        </div>
-
         <div class="channels">
-            <h3>Canales disponibles</h3>
+            <h3>Canales Deportes</h3>
             <div class="channel-grid">
                 <span class="channel-tag sports">TyC Sports</span>
-                <span class="channel-tag sports">DirecTV Sports</span>
+                <span class="channel-tag sports">DirecTV Sport</span>
+                <span class="channel-tag premium">ESPN Premium</span>
                 <span class="channel-tag sports">DeporTV</span>
                 <span class="channel-tag sports">FIFA+</span>
                 <span class="channel-tag sports">Pluto TV Futbol</span>
                 <span class="channel-tag sports">Teletrak</span>
-                <span class="channel-tag fta">Telefe</span>
+            </div>
+        </div>
+
+        <div class="channels">
+            <h3>Canales Entretenimiento</h3>
+            <div class="channel-grid">
                 <span class="channel-tag fta">El Trece</span>
-                <span class="channel-tag fta">America TV</span>
+                <span class="channel-tag fta">Telefe</span>
                 <span class="channel-tag fta">Canal 9</span>
-                <span class="channel-tag fta">TV Publica</span>
-                <span class="channel-tag fta">A24</span>
-                <span class="channel-tag fta">TN</span>
-                <span class="channel-tag fta">C5N</span>
+                <span class="channel-tag fta">America TV</span>
                 <span class="channel-tag fta">Bravo TV</span>
-                <span class="channel-tag fta">Canal 26</span>
                 <span class="channel-tag fta">Telemax</span>
-                <span class="channel-tag">+200 mas</span>
+            </div>
+        </div>
+
+        <div class="channels">
+            <h3>Canales Noticias</h3>
+            <div class="channel-grid">
+                <span class="channel-tag news">A24</span>
+                <span class="channel-tag news">TN en Vivo</span>
             </div>
         </div>
 
@@ -322,20 +279,16 @@
             <h3>Acceso</h3>
             <p>Usuario: limonsin14</p>
             <p>Contraseña: 1276</p>
-            <div class="xc-mode">
-                <p>O usa tu propio servidor IPTV con el modo Xtream Codes</p>
-                <p>(URL del servidor + usuario + contraseña)</p>
-            </div>
         </div>
 
         <div class="signing">
             <h3>Firma APK</h3>
-            <p><span class="check">✓</span> V1 (JAR signing)</p>
-            <p><span class="check">✓</span> V2 (APK Signature Scheme v2)</p>
-            <p><span class="check">✓</span> V3 (APK Signature Scheme v3)</p>
+            <p><span class="check">&#10003;</span> V1 (JAR signing)</p>
+            <p><span class="check">&#10003;</span> V2 (APK Signature Scheme v2)</p>
+            <p><span class="check">&#10003;</span> V3 (APK Signature Scheme v3)</p>
         </div>
 
-        <div class="footer">NATIVE ANDROID TV &middot; IPTV COMMUNITY &middot; XTREAM CODES</div>
+        <div class="footer">NATIVE ANDROID TV &middot; DASH + HLS &middot; 15 CANALES</div>
     </div>
 </body>
 </html>

@@ -1,0 +1,20 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.fulbito14.arg.app-mergeReleaseResources-34:/values-watch-v21/values-watch-v21.xml",
+            "map": [
+                {
+                    "source": "/home/z/.gradle/caches/8.14.2/transforms/691d268bc42e712b61e23874f0c4be70/transformed/appcompat-1.7.0/res/values-watch-v21/values-watch-v21.xml",
+                    "from": {
+                        "startLines": "2,6,10",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "55,271,499",
+                        "endLines": "5,9,13",
+                        "endColumns": "12,12,12",
+                        "endOffsets": "266,494,724"
+                    }
+                }
+            ]
+        }
+    ]
+}

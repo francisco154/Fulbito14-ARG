@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0A0A0A"
+    android:fillViewport="true">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:paddingTop="60dp"
+    android:paddingBottom="40dp"
+    android:paddingLeft="40dp"
+    android:paddingRight="40dp">
+
+    <!-- Logo minimalista -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="F14"
+        android:textSize="40sp"
+        android:textColor="#FF6600"
+        android:textStyle="bold"
+        android:letterSpacing="0.15"
+        android:layout_marginBottom="4dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ARG"
+        android:textSize="14sp"
+        android:textColor="#555555"
+        android:letterSpacing="0.4"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Version badge -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="v2.5"
+        android:textSize="11sp"
+        android:textColor="#444444"
+        android:layout_marginBottom="32dp" />
+
+    <!-- Campo Usuario -->
+    <EditText
+        android:id="@+id/edit_user"
+        android:layout_width="480dp"
+        android:layout_height="56dp"
+        android:hint="Usuario"
+        android:textColor="#E0E0E0"
+        android:textColorHint="#444444"
+        android:textSize="18sp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:background="@drawable/edit_text_bg"
+        android:layout_marginBottom="12dp"
+        android:singleLine="true"
+        android:inputType="text"
+        android:imeOptions="actionNext"
+        android:cursorVisible="true"
+        android:textCursorDrawable="@null" />
+
+    <!-- Campo Contraseña -->
+    <EditText
+        android:id="@+id/edit_pass"
+        android:layout_width="480dp"
+        android:layout_height="56dp"
+        android:hint="Contraseña"
+        android:textColor="#E0E0E0"
+        android:textColorHint="#444444"
+        android:textSize="18sp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:background="@drawable/edit_text_bg"
+        android:layout_marginBottom="28dp"
+        android:singleLine="true"
+        android:inputType="textPassword"
+        android:imeOptions="actionDone"
+        android:cursorVisible="true"
+        android:textCursorDrawable="@null" />
+
+    <!-- Botón Acceder -->
+    <Button
+        android:id="@+id/btn_login"
+        android:layout_width="480dp"
+        android:layout_height="52dp"
+        android:text="ACCEDER"
+        android:textSize="15sp"
+        android:textColor="#0A0A0A"
+        android:textStyle="bold"
+        android:letterSpacing="0.15"
+        android:background="@drawable/btn_primary"
+        android:textAllCaps="true" />
+
+    <!-- Error -->
+    <TextView
+        android:id="@+id/text_error"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textColor="#FF4444"
+        android:textSize="13sp"
+        android:layout_marginTop="16dp"
+        android:visibility="gone"
+        android:alpha="0.9" />
+
+</LinearLayout>
+</ScrollView>

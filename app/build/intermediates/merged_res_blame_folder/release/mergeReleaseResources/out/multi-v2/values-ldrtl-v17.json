@@ -1,0 +1,43 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.fulbito14.arg.app-mergeReleaseResources-34:/values-ldrtl-v17/values-ldrtl-v17.xml",
+            "map": [
+                {
+                    "source": "/home/z/.gradle/caches/8.14.2/transforms/9eb24b13a790071307d5a7cec49aa804/transformed/material-1.12.0/res/values-ldrtl-v17/values-ldrtl-v17.xml",
+                    "from": {
+                        "startLines": "2,3",
+                        "startColumns": "4,4",
+                        "startOffsets": "55,191",
+                        "endColumns": "135,140",
+                        "endOffsets": "186,327"
+                    },
+                    "to": {
+                        "startLines": "3,4",
+                        "startColumns": "4,4",
+                        "startOffsets": "133,269",
+                        "endColumns": "135,140",
+                        "endOffsets": "264,405"
+                    }
+                },
+                {
+                    "source": "/home/z/.gradle/caches/8.14.2/transforms/d485fe221b10f7b842a0cac119de80dc/transformed/leanback-1.0.0/res/values-ldrtl-v17/values-ldrtl-v17.xml",
+                    "from": {
+                        "startLines": "2,3,4",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "55,133,178",
+                        "endColumns": "77,44,46",
+                        "endOffsets": "128,173,220"
+                    },
+                    "to": {
+                        "startLines": "2,5,6",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "55,410,455",
+                        "endColumns": "77,44,46",
+                        "endOffsets": "128,450,497"
+                    }
+                }
+            ]
+        }
+    ]
+}

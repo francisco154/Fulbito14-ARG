@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0D0D0D">
+
+    <!-- Top Bar -->
+    <LinearLayout
+        android:id="@+id/top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/top_bar_bg"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingLeft="40dp"
+        android:paddingRight="40dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="⚽"
+            android:textSize="28sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fulbito14 ARG"
+            android:textSize="22sp"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:layout_marginLeft="12dp" />
+
+        <TextView
+            android:id="@+id/channel_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="14sp"
+            android:textColor="#FF6600"
+            android:layout_marginLeft="16dp"
+            android:alpha="0.8" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/text_clock"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00"
+            android:textSize="20sp"
+            android:textColor="#FFFFFF"
+            android:alpha="0.9" />
+
+        <TextView
+            android:id="@+id/text_user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="18sp"
+            android:textColor="#FFFFFF"
+            android:alpha="0.7"
+            android:layout_marginLeft="30dp" />
+    </LinearLayout>
+
+    <!-- Loading State -->
+    <LinearLayout
+        android:id="@+id/loading_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:id="@+id/loading_bar"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:indeterminate="true"
+            android:indeterminateTint="#FF6600" />
+
+        <TextView
+            android:id="@+id/loading_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cargando canales..."
+            android:textSize="18sp"
+            android:textColor="#AAAAAA"
+            android:layout_marginTop="16dp" />
+    </LinearLayout>
+
+    <!-- Channel List (ScrollView + LinearLayout) -->
+    <ScrollView
+        android:id="@+id/scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/top_bar"
+        android:paddingTop="10dp"
+        android:paddingBottom="20dp"
+        android:scrollbars="vertical"
+        android:fadingEdge="vertical"
+        android:fadingEdgeLength="40dp">
+
+        <LinearLayout
+            android:id="@+id/channel_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="40dp"
+            android:paddingRight="40dp" />
+
+    </ScrollView>
+
+    <!-- Channel Number Overlay -->
+    <LinearLayout
+        android:id="@+id/overlay_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/top_bar"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="40dp"
+        android:visibility="gone"
+        android:background="@drawable/overlay_bg"
+        android:padding="16dp"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/overlay_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1"
+            android:textSize="56sp"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+</RelativeLayout>
