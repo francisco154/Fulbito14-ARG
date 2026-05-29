@@ -44,17 +44,6 @@
             font-size: 12px;
             margin-bottom: 8px;
         }
-        .badge {
-            display: inline-block;
-            background: #1A3A1A;
-            color: #4CAF50;
-            padding: 3px 10px;
-            border-radius: 4px;
-            font-size: 10px;
-            font-weight: 600;
-            letter-spacing: 1px;
-            margin-left: 8px;
-        }
         .badge-beta {
             display: inline-block;
             background: #3A2A1A;
@@ -153,6 +142,13 @@
             content: '\2605';
             color: #FF6600;
         }
+        .whats-new li.fix {
+            color: #4CAF50;
+        }
+        .whats-new li.fix::before {
+            content: '\2713';
+            color: #4CAF50;
+        }
         .channels {
             text-align: left;
             border-top: 1px solid #1A1A1A;
@@ -202,6 +198,16 @@
             color: #CC66FF;
             border-color: #1A0A3A;
             background: #0D041A;
+        }
+        .channel-tag.videx {
+            color: #FF9944;
+            border-color: #3A2A1A;
+            background: #1A1008;
+        }
+        .channel-tag.regional {
+            color: #44AAAA;
+            border-color: #0A2A2A;
+            background: #0A1A1A;
         }
         .login-info {
             margin-top: 28px;
@@ -279,14 +285,14 @@
         <div class="logo">F14</div>
         <div class="logo-sub">Argentina</div>
 
-        <!-- BETA 1.1 -->
+        <!-- BETA 1.2 -->
         <div class="version-section">
-            <div class="version">v2.7 BETA 1.1 <span class="badge-beta">BETA</span></div>
+            <div class="version">v2.7 BETA 1.2 <span class="badge-beta">BETA</span></div>
             <br><br>
-            <a href="https://github.com/francisco154/Fulbito14-ARG/releases/download/v2.7-beta1.1/fulbito14-ARG-v2.7-BETA1.1.apk" class="download-btn beta">
+            <a href="https://github.com/francisco154/Fulbito14-ARG/releases/download/v2.7-beta1.2/fulbito14-ARG-v2.7-BETA-1.2.apk" class="download-btn beta">
                 DESCARGAR BETA
             </a>
-            <div class="file-info">11.4 MB &middot; APK &middot; Android 5.0+</div>
+            <div class="file-info">12 MB &middot; APK &middot; Android 5.0+</div>
         </div>
 
         <!-- STABLE v2.7 -->
@@ -300,23 +306,25 @@
         </div>
 
         <div class="whats-new">
-            <h3>Nuevo en BETA 1.1</h3>
+            <h3>Nuevo en BETA 1.2</h3>
             <ul>
-                <li class="new-feature">Screenify CDN - ESPN Premium + TNT Sports + TELEFE</li>
-                <li class="new-feature">20 canales: +5 Noticias (A24, TN, TV Publica, C5N, LN+)</li>
-                <li class="new-feature">YouTube Live resolver (fallback a YouTube TV app)</li>
-                <li class="new-feature">TELEFE ahora via Screenify CDN (sin API de Telefe)</li>
-                <li>Canal 9 Litoral (nuevo M3U8 arcast.live)</li>
-                <li>DeporTV, Net TV, Canal E agregados</li>
+                <li class="fix">TV Publica: Reemplazado YouTube por stream directo arcast.com.ar</li>
+                <li class="fix">TELEFE: Reemplazado Screenify CDN por Videx proxy (non-CDN)</li>
+                <li class="fix">El Trece: URL actualizada (la anterior daba 403)</li>
+                <li class="fix">Telemax: URL actualizada a telecentro.net.ar</li>
+                <li class="new-feature">+4 Canales Regionales: Canal 26, Litus TV, Canal 3, Canal 10</li>
+                <li class="new-feature">Protocolo Videx proxy (videx://) para streams sin CDN</li>
                 <li>Firma V1+V2+V3 verificada</li>
+                <li>24 canales totales</li>
             </ul>
         </div>
 
         <div class="discovery">
-            <h3>Descubrimiento Screenify CDN</h3>
-            <p>1. <code>elitegol.vip</code> &rarr; iframe mediahosting</p>
-            <p>2. <code>api.screenify.shop</code> &rarr; stream number</p>
-            <p>3. <code>streamhostingcdn.top/stream/NUM/</code> &rarr; M3U8</p>
+            <h3>Protocolos de Stream</h3>
+            <p>1. <code>screenify://</code> &rarr; ESPN Premium, TNT Sports (CDN)</p>
+            <p>2. <code>videx://</code> &rarr; TELEFE (proxy non-CDN)</p>
+            <p>3. <code>.m3u8</code> &rarr; Streams HLS directos</p>
+            <p>4. <code>.mpd</code> &rarr; TN en Vivo (DASH)</p>
         </div>
 
         <div class="channels">
@@ -342,7 +350,7 @@
             <h3>Entretenimiento</h3>
             <div class="channel-grid">
                 <span class="channel-tag fta">El Trece</span>
-                <span class="channel-tag screenify">TELEFE</span>
+                <span class="channel-tag videx">TELEFE</span>
                 <span class="channel-tag fta">Canal 9</span>
                 <span class="channel-tag fta">America TV</span>
                 <span class="channel-tag fta">Bravo TV</span>
@@ -363,6 +371,16 @@
             </div>
         </div>
 
+        <div class="channels">
+            <h3>Regionales (NUEVO)</h3>
+            <div class="channel-grid">
+                <span class="channel-tag regional">Canal 26</span>
+                <span class="channel-tag regional">Litus TV</span>
+                <span class="channel-tag regional">Canal 3 La Pampa</span>
+                <span class="channel-tag regional">Canal 10 Cordoba</span>
+            </div>
+        </div>
+
         <div class="login-info">
             <h3>Acceso</h3>
             <p>Usuario: limonsin14</p>
@@ -376,7 +394,7 @@
             <p><span class="check">&#10003;</span> V3 (APK Signature Scheme v3)</p>
         </div>
 
-        <div class="footer">NATIVE ANDROID TV &middot; DASH + HLS + SCREENIFY CDN &middot; 20 CANALES</div>
+        <div class="footer">NATIVE ANDROID TV &middot; DASH + HLS + SCREENIFY CDN + VIDEX PROXY &middot; 24 CANALES</div>
     </div>
 </body>
 </html>
