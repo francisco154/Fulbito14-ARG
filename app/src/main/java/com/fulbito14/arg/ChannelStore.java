@@ -12,7 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Manages channel data - v2.5: Expanded with DirecTV Sports, TN DASH, Telefe API resolver
+ * Manages channel data - v2.7: ESPN Premium + TNT Sports via Screenify CDN
+ * Telemax new CDN, TN DASH, Telefe API resolver, DirecTV Sport DASH
  * No more M3U fetcher, no more XtreamCodesClient
  * Falls back to built-in channels if API is unavailable
  */
@@ -186,8 +187,8 @@ public class ChannelStore {
 
     // ============================================================
     // Built-in Fallback Channels
-    // v2.5: Expanded with DirecTV Sport DASH, TN DASH, Telefe API,
-    //        Telemax new CDN, ESPN Premium placeholder
+    // v2.7: ESPN Premium via Screenify CDN, TNT Sports added,
+    //        DirecTV Sport DASH, TN DASH, Telefe API, Telemax CDN
     // ============================================================
 
     private static List<Channel> getBuiltinChannels() {
@@ -199,63 +200,67 @@ public class ChannelStore {
                 "https://amg26268-amg26268c14-freelivesports-emea-10267.playouts.now.amagi.tv/ts-us-e2-n2/playlist/amg26268-sportsstudio-tycsports-freelivesportsemea/playlist.m3u8",
                 "", "TyC Sports - Deportes 24hs", "builtin"));
 
-        channels.add(new Channel(2, "DirecTV Sport Argentina", 2, "Deportes", "Argentina", "dsports",
-                "https://latam-cache-sv2-cdn.latamlive.net/DS1_ENC_LIVE/index.mpd",
-                "", "DirecTV Sports - DASH Stream", "builtin"));
+        channels.add(new Channel(2, "ESPN Premium ARG", 2, "Deportes Premium", "Argentina", "espn",
+                "screenify://7906e10a-01ab-4ff6-a5e5-9b0d9e447544",
+                "", "ESPN Premium Argentina - Screenify", "builtin"));
 
-        channels.add(new Channel(3, "ESPN Premium ARG", 3, "Deportes Premium", "Argentina", "espn",
-                "https://latam-cache-sv2-cdn.latamlive.net/ESPN_PREMIUM_ENC_LIVE/index.mpd",
-                "", "ESPN Premium Argentina", "builtin"));
+        channels.add(new Channel(3, "TNT Sports ARG", 3, "Deportes Premium", "Argentina", "tnt",
+                "screenify://ba3fa55b-f212-4f69-824c-40e8cef94b56",
+                "", "TNT Sports Argentina - Screenify", "builtin"));
 
-        channels.add(new Channel(4, "DeporTV", 4, "Deportes", "Argentina", "deportv",
+        channels.add(new Channel(4, "DirecTV Sport Argentina", 4, "Deportes", "Argentina", "dsports",
+                "screenify://35192a95-5d04-44c6-9d1a-84f446d91b28",
+                "", "DirecTV Sports Argentina - Screenify", "builtin"));
+
+        channels.add(new Channel(5, "DeporTV", 5, "Deportes", "Argentina", "deportv",
                 "https://5fb24b460df87.streamlock.net/live-cont.ar/deportv/playlist.m3u8",
                 "", "DeporTV - Deporte Publico", "builtin"));
 
-        channels.add(new Channel(5, "FIFA+ Hispanic America", 5, "Deportes", "Latinoamerica", "tv",
+        channels.add(new Channel(6, "FIFA+ Hispanic America", 6, "Deportes", "Latinoamerica", "tv",
                 "https://6c849fb3.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/TEctbXhfRklGQVBsdXNTcGFuaXNoLTFfSExT/playlist.m3u8",
                 "", "FIFA+ Latinoamerica", "builtin"));
 
-        channels.add(new Channel(6, "Pluto TV Futbol Para Fans", 6, "Deportes", "Latinoamerica", "tv",
+        channels.add(new Channel(7, "Pluto TV Futbol Para Fans", 7, "Deportes", "Latinoamerica", "tv",
                 "https://886bd3fbc782459f8de7555d32d7e9ce.mediatailor.us-west-2.amazonaws.com/v1/master/ba62fe743df0fe93366eba3a257d792884136c7f/LINEAR-957-WORBLATAMESFAST-WHALETVPLUS/957/whaletvplus/hls/master/playlist.m3u8",
                 "", "Pluto TV Futbol Para Fans", "builtin"));
 
-        channels.add(new Channel(7, "Teletrak", 7, "Deportes", "Chile", "tv",
+        channels.add(new Channel(8, "Teletrak", 8, "Deportes", "Chile", "tv",
                 "https://unlimited6-cl.dps.live/sportinghd/sportinghd.smil/playlist.m3u8",
                 "", "Teletrak Chile Deportes", "builtin"));
 
         // ===================== ENTRETENIMIENTO =====================
 
-        channels.add(new Channel(8, "El Trece", 8, "Entretenimiento", "Argentina", "trece",
+        channels.add(new Channel(9, "El Trece", 9, "Entretenimiento", "Argentina", "trece",
                 "https://live-01-02-eltrece.vodgc.net/eltrecetv/index.m3u8",
                 "", "El Trece Argentina", "builtin"));
 
-        channels.add(new Channel(9, "Telefe", 9, "Entretenimiento", "Argentina", "telefe",
+        channels.add(new Channel(10, "Telefe", 10, "Entretenimiento", "Argentina", "telefe",
                 "https://telefe.com/Api/Videos/GetSourceUrl/694564/0/HLS?.m3u8",
                 "", "Telefe Argentina", "builtin"));
 
-        channels.add(new Channel(10, "Canal 9", 10, "Entretenimiento", "Argentina", "canal9",
+        channels.add(new Channel(11, "Canal 9", 11, "Entretenimiento", "Argentina", "canal9",
                 "https://octubre-live.cdn.vustreams.com/live/channel09/live.isml/live.m3u8",
                 "", "Canal 9 Argentina", "builtin"));
 
-        channels.add(new Channel(11, "America TV", 11, "Entretenimiento", "Argentina", "america",
+        channels.add(new Channel(12, "America TV", 12, "Entretenimiento", "Argentina", "america",
                 "https://prepublish.f.qaotic.net/a07/americahls-100056/playlist_720p.m3u8",
                 "", "America TV Argentina", "builtin"));
 
-        channels.add(new Channel(12, "Bravo TV", 12, "Entretenimiento", "Argentina", "tv",
+        channels.add(new Channel(13, "Bravo TV", 13, "Entretenimiento", "Argentina", "tv",
                 "https://redirector.rudo.video/hls-video/c54ac2799874375c81c1672abb700870537c5223/bravo/bravo.smil/playlist.m3u8?did=b2201035844768f58630b7eef",
                 "", "Bravo TV Argentina", "builtin"));
 
-        channels.add(new Channel(13, "Telemax", 13, "Entretenimiento", "Argentina", "tv",
+        channels.add(new Channel(14, "Telemax", 14, "Entretenimiento", "Argentina", "tv",
                 "https://stream-gtlc.telecentro.net.ar/hls/telemaxhls/main.m3u8",
                 "", "Telemax Argentina", "builtin"));
 
         // ===================== NOTICIAS =====================
 
-        channels.add(new Channel(14, "A24", 14, "Noticias", "Argentina", "tn",
+        channels.add(new Channel(15, "A24", 15, "Noticias", "Argentina", "tn",
                 "https://g5.vxral-slo.transport.edge-access.net/a12/ngrp:a24-100056_all/playlist.m3u8?sense=true",
                 "", "A24 Noticias Argentina", "builtin"));
 
-        channels.add(new Channel(15, "TN en Vivo", 15, "Noticias", "Argentina", "tn",
+        channels.add(new Channel(16, "TN en Vivo", 16, "Noticias", "Argentina", "tn",
                 "https://latam-cache-sv2-cdn.latamlive.net/TN_ENC_LIVE/index.mpd",
                 "", "Todo Noticias Argentina", "builtin"));
 

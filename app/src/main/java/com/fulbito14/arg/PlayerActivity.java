@@ -36,7 +36,8 @@ import java.util.concurrent.Executors;
 
 /**
  * Player screen - uses ExoPlayer for native HLS/DASH playback
- * v2.5: Telefe API URL resolver, improved DASH support, ESPN Premium fallback
+ * v2.7: Screenify API resolver for ESPN Premium, TNT Sports, DirecTV Sport
+ *        Telefe API URL resolver, improved DASH support
  */
 public class PlayerActivity extends Activity {
 
@@ -200,11 +201,14 @@ public class PlayerActivity extends Activity {
     }
 
     /**
-     * v2.5: Check if a URL needs resolution before playback
+     * v2.7: Check if a URL needs resolution before playback
+     * Screenify:// URLs need API resolution to get M3U8
      * Telefe API URLs return JSON/redirect, not direct M3U8
      */
     private boolean needsResolution(String url) {
         if (url == null) return false;
+        // Screenify protocol - needs API resolution
+        if (url.startsWith("screenify://")) return true;
         // Telefe API endpoint that needs resolution
         if (url.contains("telefe.com/Api/Videos/GetSourceUrl")) return true;
         // Any API endpoint that returns redirect/JSON instead of M3U8
@@ -234,11 +238,17 @@ public class PlayerActivity extends Activity {
     }
 
     /**
-     * v2.5: Resolve a stream URL by making an HTTP request
-     * Handles redirects, JSON responses, and direct M3U8 URLs
+     * v2.7: Resolve a stream URL by making an HTTP request
+     * Handles Screenify:// protocol, Telefe API, redirects, JSON responses
      */
     private String resolveStreamUrl(String apiUrl) {
         try {
+            // v2.7: Screenify protocol resolution
+            // screenify://CONFIG_UUID -> api.screenify.shop -> stream ID -> M3U8
+            if (apiUrl.startsWith("screenify://")) {
+                return resolveScreenifyUrl(apiUrl);
+            }
+
             URL url = new URL(apiUrl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setInstanceFollowRedirects(true);
@@ -343,8 +353,69 @@ public class PlayerActivity extends Activity {
     }
 
     /**
+     * v2.7: Resolve Screenify:// protocol URL to actual M3U8 stream
+     * Flow: screenify://UUID -> api.screenify.shop/api/embed-configs/public/UUID
+     *       -> get stream number -> 1nyaler.streamhostingcdn.top/stream/NUM/index.m3u8
+     */
+    private String resolveScreenifyUrl(String screenifyUrl) {
+        try {
+            // Extract config UUID from screenify://UUID
+            String configId = screenifyUrl.substring("screenify://".length());
+            String apiUrl = "https://api.screenify.shop/api/embed-configs/public/" + configId;
+
+            Log.i("PlayerActivity", "Resolving Screenify config: " + configId);
+
+            URL url = new URL(apiUrl);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setConnectTimeout(10000);
+            conn.setReadTimeout(10000);
+            conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Linux; Android 11; AndroidTV) AppleWebKit/537.36");
+            conn.setRequestProperty("Accept", "application/json");
+
+            int responseCode = conn.getResponseCode();
+            if (responseCode != 200) {
+                Log.w("PlayerActivity", "Screenify API returned: " + responseCode);
+                conn.disconnect();
+                return null;
+            }
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            StringBuilder body = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                body.append(line);
+            }
+            reader.close();
+            conn.disconnect();
+
+            String responseBody = body.toString().trim();
+            Log.i("PlayerActivity", "Screenify response: " + responseBody.substring(0, Math.min(200, responseBody.length())));
+
+            // Parse JSON to extract stream number
+            if (responseBody.startsWith("{")) {
+                try {
+                    org.json.JSONObject json = new org.json.JSONObject(responseBody);
+                    String streamId = json.optString("stream", "");
+                    if (!streamId.isEmpty()) {
+                        String m3u8Url = "https://1nyaler.streamhostingcdn.top/stream/" + streamId + "/index.m3u8";
+                        Log.i("PlayerActivity", "Screenify resolved to: " + m3u8Url);
+                        return m3u8Url;
+                    }
+                } catch (Exception e) {
+                    Log.e("PlayerActivity", "Screenify JSON parse failed: " + e.getMessage());
+                }
+            }
+
+            return null;
+        } catch (Exception e) {
+            Log.e("PlayerActivity", "Screenify resolution failed: " + e.getMessage());
+            return null;
+        }
+    }
+
+    /**
      * Play a direct M3U8/HLS/DASH stream URL
-     * v2.5: Improved DASH support with DashMediaSource
+     * v2.7: Improved DASH support with DashMediaSource
      */
     private void playStream(String streamUrl, String customUserAgent) {
         if (player == null || isDestroyed || streamUrl == null || streamUrl.isEmpty()) {
