@@ -44,6 +44,17 @@
             font-size: 12px;
             margin-bottom: 32px;
         }
+        .badge {
+            display: inline-block;
+            background: #1A3A1A;
+            color: #4CAF50;
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-left: 8px;
+        }
         .download-btn {
             display: inline-block;
             background: #FF6600;
@@ -66,10 +77,72 @@
             color: #444;
             margin-bottom: 48px;
         }
+        .whats-new {
+            text-align: left;
+            border-top: 1px solid #1A1A1A;
+            padding-top: 28px;
+            margin-bottom: 28px;
+        }
+        .whats-new h3 {
+            color: #FF6600;
+            margin-bottom: 12px;
+            font-size: 11px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+        .whats-new ul {
+            list-style: none;
+            padding: 0;
+        }
+        .whats-new li {
+            color: #888;
+            font-size: 13px;
+            padding: 4px 0;
+            padding-left: 16px;
+            position: relative;
+        }
+        .whats-new li::before {
+            content: '+';
+            position: absolute;
+            left: 0;
+            color: #FF6600;
+            font-weight: bold;
+        }
+        .sources {
+            text-align: left;
+            border-top: 1px solid #1A1A1A;
+            padding-top: 28px;
+            margin-bottom: 28px;
+        }
+        .sources h3 {
+            color: #555;
+            margin-bottom: 12px;
+            font-size: 11px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+        .source-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .source-tag {
+            background: #111;
+            border: 1px solid #1A1A1A;
+            color: #888;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        .source-tag.active {
+            color: #4CAF50;
+            border-color: #1A3A1A;
+            background: #0A1A0A;
+        }
         .channels {
             text-align: left;
             border-top: 1px solid #1A1A1A;
-            padding-top: 32px;
+            padding-top: 28px;
         }
         .channels h3 {
             color: #555;
@@ -91,10 +164,15 @@
             border-radius: 4px;
             font-size: 12px;
         }
-        .channel-tag.premium {
-            color: #FFD700;
-            border-color: #332A00;
-            background: #1A1500;
+        .channel-tag.sports {
+            color: #FF6600;
+            border-color: #2A1508;
+            background: #1A0D04;
+        }
+        .channel-tag.fta {
+            color: #4CAF50;
+            border-color: #1A3A1A;
+            background: #0A1A0A;
         }
         .login-info {
             margin-top: 28px;
@@ -114,6 +192,26 @@
             font-size: 13px;
             font-family: monospace;
         }
+        .signing {
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid #1A1A1A;
+            text-align: left;
+        }
+        .signing h3 {
+            color: #555;
+            margin-bottom: 10px;
+            font-size: 11px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+        .signing p {
+            color: #444;
+            font-size: 12px;
+        }
+        .signing .check {
+            color: #4CAF50;
+        }
         .footer {
             margin-top: 48px;
             font-size: 10px;
@@ -126,36 +224,53 @@
     <div class="container">
         <div class="logo">F14</div>
         <div class="logo-sub">Argentina</div>
-        <div class="version">v2.1</div>
+        <div class="version">v2.2 <span class="badge">IPTV</span></div>
         <br>
-        <a href="https://github.com/francisco154/Fulbito14-ARG/releases/download/v2.1/Fulbito14ARG_v2.1.apk" class="download-btn">
+        <a href="https://github.com/francisco154/Fulbito14-ARG/releases/download/v2.2/Fulbito14-ARG-v2.2.apk" class="download-btn">
             DESCARGAR
         </a>
         <div class="file-info">8.6 MB &middot; APK &middot; Android 5.0+</div>
 
+        <div class="whats-new">
+            <h3>Nuevo en v2.2</h3>
+            <ul>
+                <li>Canales dinamicos desde iptv-org (auto-actualizados)</li>
+                <li>100+ canales argentinos y latinos disponibles</li>
+                <li>Canales siempre frescos - la comunidad los mantiene</li>
+                <li>Cache local para acceso rapido sin internet</li>
+                <li>Canales de fallback incluidos (TyC Sports, DeporTV, Telefe...)</li>
+                <li>Reproductor simplificado - reproduccion directa M3U8</li>
+                <li>Categorias automaticas (Deportes, Noticias, Entretenimiento)</li>
+                <li>Ya no depende de sitios de terceros (la12hd/la14hd eliminados)</li>
+            </ul>
+        </div>
+
+        <div class="sources">
+            <h3>Fuentes de contenido</h3>
+            <div class="source-grid">
+                <span class="source-tag active">iptv-org Argentina</span>
+                <span class="source-tag active">iptv-org Sports</span>
+                <span class="source-tag active">iptv-org Spanish</span>
+                <span class="source-tag active">radiosargentina</span>
+            </div>
+        </div>
+
         <div class="channels">
-            <h3>Canales</h3>
+            <h3>Canales disponibles</h3>
             <div class="channel-grid">
-                <span class="channel-tag">ESPN</span>
-                <span class="channel-tag">ESPN 2</span>
-                <span class="channel-tag">ESPN 3</span>
-                <span class="channel-tag">ESPN 4</span>
-                <span class="channel-tag">ESPN 5</span>
-                <span class="channel-tag">ESPN 6</span>
-                <span class="channel-tag">ESPN 7</span>
-                <span class="channel-tag premium">ESPN Premium</span>
-                <span class="channel-tag">Fox Sports</span>
-                <span class="channel-tag">Fox Sports 2</span>
-                <span class="channel-tag">Fox Sports 3</span>
-                <span class="channel-tag premium">Fox Sports Premium</span>
-                <span class="channel-tag">DSports</span>
-                <span class="channel-tag premium">DSports+</span>
-                <span class="channel-tag">TNT Sports</span>
-                <span class="channel-tag">TyC Sports</span>
-                <span class="channel-tag">Win Sports</span>
-                <span class="channel-tag">Win Sports+</span>
-                <span class="channel-tag premium">Win Sports+ Premium</span>
-                <span class="channel-tag">TUDN</span>
+                <span class="channel-tag sports">TyC Sports</span>
+                <span class="channel-tag sports">DeporTV</span>
+                <span class="channel-tag sports">FIFA+</span>
+                <span class="channel-tag fta">Telefe</span>
+                <span class="channel-tag fta">El Trece</span>
+                <span class="channel-tag fta">America TV</span>
+                <span class="channel-tag fta">Canal 9</span>
+                <span class="channel-tag fta">TV Publica</span>
+                <span class="channel-tag fta">TN</span>
+                <span class="channel-tag fta">C5N</span>
+                <span class="channel-tag fta">Canal 26</span>
+                <span class="channel-tag fta">Telemax</span>
+                <span class="channel-tag">+100 mas</span>
             </div>
         </div>
 
@@ -165,7 +280,14 @@
             <p>Contraseña: 1276</p>
         </div>
 
-        <div class="footer">NATIVE ANDROID TV</div>
+        <div class="signing">
+            <h3>Firma APK</h3>
+            <p><span class="check">✓</span> V1 (JAR signing)</p>
+            <p><span class="check">✓</span> V2 (APK Signature Scheme v2)</p>
+            <p><span class="check">✓</span> V3 (APK Signature Scheme v3)</p>
+        </div>
+
+        <div class="footer">NATIVE ANDROID TV &middot; IPTV COMMUNITY</div>
     </div>
 </body>
 </html>
