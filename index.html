@@ -80,22 +80,25 @@
     <div class="container">
         <div class="logo">⚽</div>
         <h1 class="title">Fulbito14 Stream</h1>
-        <p class="version">v2.1.2</p>
-        <p class="badge">100% NATIVA - BUG FIX</p>
-        <a class="download-btn" href="https://raw.githubusercontent.com/francisco154/Fulbito14-ARG/main/fulbito14-Stream-v2.1.2.apk" download>
-            Descargar APK v2.1.2
+        <p class="version">v2.1.3</p>
+        <p class="badge">100% NATIVA - STABLE</p>
+        <a class="download-btn" href="https://raw.githubusercontent.com/francisco154/Fulbito14-ARG/main/fulbito14-Stream-v2.1.3.apk" download>
+            Descargar APK v2.1.3
         </a>
+        <a class="alt-link" href="https://raw.githubusercontent.com/francisco154/Fulbito14-ARG/main/fulbito14-Stream-v2.1.2.apk">Descargar v2.1.2</a>
         <a class="alt-link" href="https://raw.githubusercontent.com/francisco154/Fulbito14-ARG/main/fulbito14-Stream-v2.1.1.apk">Descargar v2.1.1</a>
         <a class="alt-link" href="fulbito14-Stream-v2.0.0.apk">Descargar v2.0.0 (Cordova)</a>
         <div class="features">
-            <h2>v2.1.2 - Fix de Crash + Focus</h2>
+            <h2>v2.1.3 - Fix de Crash + Editar/Eliminar Perfiles</h2>
             <ul>
-                <li><span>FIX:</span> Crash en Home - API consultaba tabla "series" inexistente (ahora usa "content")</li>
-                <li><span>FIX:</span> Seleccionador de perfiles sin indicador visual de foco en Android TV</li>
-                <li><span>NEW:</span> Borde amarillo + escala + elevacion al seleccionar perfil con el mando</li>
-                <li><span>NEW:</span> Nombre del perfil cambia a amarillo cuando tiene foco</li>
-                <li><span>FIX:</span> Campos nullable en Content (cover_url, year, genre) - manejo de null seguro</li>
-                <li><span>100% Nativa</span> Kotlin + Android TV Leanback</li>
+                <li><span>FIX CRITICAL:</span> Login API - userId se guardaba vacio (respuesta anidada user.id)</li>
+                <li><span>FIX CRITICAL:</span> Crash en Home - Reemplazado BrowseSupportFragment inestable por catalog custom RecyclerView</li>
+                <li><span>FIX:</span> Catalogo con tabs Todo / Series / Peliculas usando TabLayout</li>
+                <li><span>NEW:</span> Editar perfil - Manten presionado sobre un perfil para editar nombre y avatar</li>
+                <li><span>NEW:</span> Eliminar perfil - Manten presionado sobre un perfil para eliminar</li>
+                <li><span>NEW:</span> API endpoints update_profile y delete_profile en Vercel</li>
+                <li><span>NEW:</span> Detalle de series con lista de episodios por temporada</li>
+                <li><span>100% Nativa</span> Kotlin + Android TV</li>
                 <li><span>ExoPlayer</span> (Media3) para reproduccion de video</li>
                 <li><span>Login</span> desde tabla app_users en Supabase</li>
                 <li><span>Perfiles</span> con avatares desde tabla avatars en Supabase</li>
@@ -105,7 +108,7 @@
         </div>
         <div class="tech-box">
             <h3>Stack Tecnologico</h3>
-            <code>Kotlin · Leanback · ExoPlayer/Media3 · OkHttp · Gson · Glide · Coroutines · Supabase · Vercel</code>
+            <code>Kotlin · RecyclerView · TabLayout · ExoPlayer/Media3 · OkHttp · Gson · Glide · Coroutines · Supabase · Vercel</code>
         </div>
         <p class="footer">Fulbito14 Stream 2026 | Android TV App</p>
     </div>
