@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fulbito14 Stream - Descarga</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3e 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .container { text-align: center; padding: 40px 20px; max-width: 600px; }
+        .logo { font-size: 80px; margin-bottom: 16px; }
+        .title {
+            font-size: 36px;
+            background: linear-gradient(90deg, #4fc3f7, #81d4fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+        .version { color: #8888aa; font-size: 16px; margin-bottom: 32px; }
+        .download-btn {
+            display: inline-block;
+            padding: 18px 48px;
+            background: linear-gradient(135deg, #4fc3f7, #2196f3);
+            color: #000;
+            text-decoration: none;
+            border-radius: 16px;
+            font-size: 20px;
+            font-weight: 700;
+            transition: all 0.3s;
+            box-shadow: 0 4px 20px rgba(79,195,247,0.3);
+        }
+        .download-btn:hover { transform: scale(1.05); box-shadow: 0 6px 30px rgba(79,195,247,0.5); }
+        .features {
+            margin-top: 40px;
+            text-align: left;
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 24px;
+        }
+        .features h2 { color: #4fc3f7; margin-bottom: 16px; font-size: 20px; }
+        .features ul { list-style: none; }
+        .features li { padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .features li:last-child { border: none; }
+        .features li span { color: #4fc3f7; margin-right: 8px; }
+        .footer { margin-top: 32px; color: #555; font-size: 13px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">⚽</div>
+        <h1 class="title">Fulbito14 Stream</h1>
+        <p class="version">v2.0.0 - Construida desde cero</p>
+        <a class="download-btn" href="fulbito14-Stream-v2.0.0.apk" download>
+            Descargar APK
+        </a>
+        <div class="features">
+            <h2>✨ Novedades v2.0</h2>
+            <ul>
+                <li><span>🔐</span> Login con Supabase Auth (usuario + contraseña)</li>
+                <li><span>👤</span> Perfiles con avatares desde Supabase Storage</li>
+                <li><span>💾</span> Sesión persistente (no repites login)</li>
+                <li><span>📺</span> Catálogo de series y películas</li>
+                <li><span>🎬</span> Reproductor de video integrado</li>
+                <li><span>🤖</span> Bot de Telegram para subir contenido</li>
+                <li><span>🔑</span> Firma V1 + V2 + V3</li>
+                <li><span>📱</span> Compatible con Android TV + Móvil</li>
+            </ul>
+        </div>
+        <p class="footer">Fulbito14 Stream &copy; 2026 | Android TV App</p>
+    </div>
+</body>
+</html>
