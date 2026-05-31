@@ -80,37 +80,38 @@
     <div class="container">
         <div class="logo">⚽</div>
         <h1 class="title">Fulbito14 Stream</h1>
-        <p class="version">v2.1.5</p>
-        <p class="badge">100% NATIVA - STABLE</p>
-        <a class="download-btn" href="https://raw.githubusercontent.com/francisco154/Fulbito14-ARG/main/fulbito14-Stream-v2.1.5.apk" download>
-            Descargar APK v2.1.5
+        <p class="version">v3.0.0</p>
+        <p class="badge">100% NATIVA - RECYCLERVIEW MIGRATION</p>
+        <a class="download-btn" href="https://raw.githubusercontent.com/francisco154/Fulbito14-ARG/main/fulbito14-Stream-v3.0.0.apk" download>
+            Descargar APK v3.0.0
         </a>
+        <a class="alt-link" href="https://raw.githubusercontent.com/francisco154/Fulbito14-ARG/main/fulbito14-Stream-v3.0.0.apk">Descargar v3.0.0</a>
         <a class="alt-link" href="https://raw.githubusercontent.com/francisco154/Fulbito14-ARG/main/fulbito14-Stream-v2.1.5.apk">Descargar v2.1.5</a>
         <a class="alt-link" href="https://raw.githubusercontent.com/francisco154/Fulbito14-ARG/main/fulbito14-Stream-v2.1.4.apk">Descargar v2.1.4</a>
-        <a class="alt-link" href="https://raw.githubusercontent.com/francisco154/Fulbito14-ARG/main/fulbito14-Stream-v2.1.3.apk">Descargar v2.1.3</a>
-        <a class="alt-link" href="https://raw.githubusercontent.com/francisco154/Fulbito14-ARG/main/fulbito14-Stream-v2.1.1.apk">Descargar v2.1.1</a>
         <a class="alt-link" href="fulbito14-Stream-v2.0.0.apk">Descargar v2.0.0 (Cordova)</a>
         <div class="features">
-            <h2>v2.1.5 - Fix Seleccion Perfil con Boton OK</h2>
+            <h2>v3.0.0 - Refactorizacion Total: GridView ELIMINADO</h2>
             <ul>
-                <li><span>FIX CRITICAL:</span> Boton OK del mando no seleccionaba perfil - app se quedaba tildada en "Quien esta viendo?"</li>
-                <li><span>FIX:</span> Eliminar perfil - endpoint Vercel crasheaba con respuesta vacia de Supabase DELETE</li>
-                <li><span>FIX:</span> Reemplazado GridView.setOnItemClickListener por setOnClickListener directo en cada vista de perfil</li>
+                <li><span>REFACTORIZACION TOTAL:</span> GridView eliminado de raiz - migrado a RecyclerView</li>
+                <li><span>FIX DEFINITIVO:</span> Boton OK del mando TV ahora funciona correctamente en seleccion de perfil</li>
+                <li><span>NUCLEO:</span> RecyclerView + GridLayoutManager - mismo patron probado de CatalogActivity</li>
+                <li><span>FAILSAFE:</span> OnKeyListener captura DPAD_CENTER + KEYCODE_ENTER explicitamente</li>
+                <li><span>ADAPTER:</span> RecyclerView.Adapter con ViewHolders dedicados (ProfileViewHolder, AddProfileViewHolder)</li>
+                <li><span>XML:</span> Items con focusable=true en raiz, childs focusable=false (no roban focus)</li>
                 <li><span>FIX:</span> Login API - userId se guardaba vacio (respuesta anidada user.id)</li>
                 <li><span>FIX:</span> Crash en Home - BrowseSupportFragment reemplazado por RecyclerView + TabLayout</li>
+                <li><span>FIX:</span> Delete profile - endpoint Vercel manejaba mal respuesta vacia</li>
                 <li><span>NEW:</span> Editar/Eliminar perfil - Manten presionado sobre un perfil</li>
                 <li><span>NEW:</span> Detalle de series con lista de episodios por temporada</li>
                 <li><span>100% Nativa</span> Kotlin + Android TV</li>
                 <li><span>ExoPlayer</span> (Media3) para reproduccion de video</li>
-                <li><span>Login</span> desde tabla app_users en Supabase</li>
-                <li><span>Perfiles</span> con avatares desde tabla avatars en Supabase</li>
                 <li><span>Sesion persistente</span></li>
                 <li><span>Firma</span> V1 + V2 + V3</li>
             </ul>
         </div>
         <div class="tech-box">
             <h3>Stack Tecnologico</h3>
-            <code>Kotlin · RecyclerView · TabLayout · ExoPlayer/Media3 · OkHttp · Gson · Glide · Coroutines · Supabase · Vercel</code>
+            <code>Kotlin · RecyclerView · GridLayoutManager · TabLayout · ExoPlayer/Media3 · OkHttp · Gson · Glide · Coroutines · Supabase · Vercel</code>
         </div>
         <p class="footer">Fulbito14 Stream 2026 | Android TV App</p>
     </div>
