@@ -198,40 +198,38 @@
 
         <!-- ==================== STREAM TAB ==================== -->
         <div id="tab-stream" class="tab-content">
-            <!-- v1.5.0 LATEST -->
+            <!-- v1.5.1 LATEST -->
             <div class="version-section">
-                <div class="version">v1.5.0 <span class="badge-new">NUEVO</span> <span class="badge-stable">ESTABLE</span></div>
+                <div class="version">v1.5.1 <span class="badge-new">NUEVO</span> <span class="badge-stable">ESTABLE</span></div>
                 <br><br>
-                <a href="fulbito14-Stream-v1.5.0.apk" class="download-btn stream">
+                <a href="fulbito14-Stream-v1.5.1.apk" class="download-btn stream">
+                    DESCARGAR v1.5.1
+                </a>
+                <div class="file-info">7.1 MB &middot; APK &middot; Android 5.0+ (Android TV)</div>
+            </div>
+
+            <!-- v1.5.0 OLD -->
+            <div class="version-section">
+                <div class="version">v1.5.0 <span class="badge-beta">BETA</span></div>
+                <br><br>
+                <a href="fulbito14-Stream-v1.5.0.apk" class="download-btn beta">
                     DESCARGAR v1.5.0
                 </a>
                 <div class="file-info">9.4 MB &middot; APK &middot; Android 5.0+ (Android TV)</div>
             </div>
 
-            <!-- v1.0.0 OLD -->
-            <div class="version-section">
-                <div class="version">v1.0.0 BETA 1.3 <span class="badge-beta">BETA</span></div>
-                <br><br>
-                <a href="https://github.com/francisco154/Fulbito14-Stream/releases/download/v1.0.0-BETA1.3/fulbito14-Stream-v1.0.0-BETA1.3.apk" class="download-btn beta">
-                    DESCARGAR v1.0.0
-                </a>
-                <div class="file-info">7 MB &middot; APK &middot; Android 5.0+ (Android TV)</div>
-            </div>
-
             <div class="whats-new">
-                <h3 class="stream-color">Nuevo en v1.5.0</h3>
+                <h3 class="stream-color">Nuevo en v1.5.1</h3>
                 <ul>
-                    <li class="stream-feat">Login simplificado - usuario y contrase&ntilde;a</li>
-                    <li class="stream-feat">Creaci&oacute;n de perfil con avatar divertido</li>
-                    <li class="stream-feat">Selecciona tu foto de perfil + nombre</li>
-                    <li class="stream-feat">UI redise&ntilde;ada m&aacute;s intuitiva</li>
-                    <li class="stream-feat">Cat&aacute;logo de Series y Pel&iacute;culas</li>
-                    <li class="stream-feat">Continuar Viendo - resume donde dejaste</li>
-                    <li class="stream-feat">M&uacute;ltiples perfiles</li>
-                    <li class="stream-feat">ExoPlayer con buffer de 1 minuto</li>
-                    <li class="stream-feat">Portadas desde IBb.co</li>
-                    <li class="stream-feat">Bot de Telegram para carga de contenido</li>
-                    <li class="stream-feat">Supabase + Telegram como backend</li>
+                    <li class="fix">Fix crash al crear perfil - esquema Supabase corregido</li>
+                    <li class="fix">Fix columna is_kids vs is_default (mismatch con bot)</li>
+                    <li class="fix">Fix columna last_watched vs last_watched_at</li>
+                    <li class="fix">Fix java.time.Instant crash en Android &lt;8</li>
+                    <li class="fix">Fix URL del proxy de stream</li>
+                    <li class="stream-feat">Login con sesi&oacute;n persistente - no pide credenciales cada vez</li>
+                    <li class="stream-feat">Creaci&oacute;n de perfil con 12 avatars divertidos</li>
+                    <li class="stream-feat">Auto-configuraci&oacute;n de Supabase al loguearse</li>
+                    <li class="stream-feat">Firma V1 + V2 + V3 verificada</li>
                 </ul>
             </div>
 
