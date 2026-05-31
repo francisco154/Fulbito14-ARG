@@ -16,7 +16,7 @@
             align-items: center;
             justify-content: center;
         }
-        .container { text-align: center; padding: 40px 20px; max-width: 600px; }
+        .container { text-align: center; padding: 40px 20px; max-width: 650px; }
         .logo { font-size: 80px; margin-bottom: 16px; }
         .title {
             font-size: 36px;
@@ -25,7 +25,17 @@
             -webkit-text-fill-color: transparent;
             margin-bottom: 8px;
         }
-        .version { color: #8888aa; font-size: 16px; margin-bottom: 32px; }
+        .version { color: #8888aa; font-size: 16px; margin-bottom: 8px; }
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #4caf50, #2e7d32);
+            color: #fff;
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
         .download-btn {
             display: inline-block;
             padding: 18px 48px;
@@ -40,9 +50,9 @@
             margin-bottom: 12px;
         }
         .download-btn:hover { transform: scale(1.05); box-shadow: 0 6px 30px rgba(79,195,247,0.5); }
-        .alt-link { color: #4fc3f7; font-size: 14px; margin-top: 8px; }
+        .alt-link { color: #4fc3f7; font-size: 14px; margin-top: 8px; display: block; }
         .features {
-            margin-top: 40px;
+            margin-top: 32px;
             text-align: left;
             background: rgba(255,255,255,0.05);
             border-radius: 16px;
@@ -53,6 +63,16 @@
         .features li { padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .features li:last-child { border: none; }
         .features li span { color: #4fc3f7; margin-right: 8px; }
+        .tech-box {
+            margin-top: 24px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(79,195,247,0.2);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: left;
+        }
+        .tech-box h3 { color: #4fc3f7; font-size: 14px; margin-bottom: 8px; }
+        .tech-box code { color: #81d4fa; font-size: 12px; }
         .footer { margin-top: 32px; color: #555; font-size: 13px; }
     </style>
 </head>
@@ -60,22 +80,28 @@
     <div class="container">
         <div class="logo">⚽</div>
         <h1 class="title">Fulbito14 Stream</h1>
-        <p class="version">v2.0.0 - Construida desde cero</p>
-        <a class="download-btn" href="https://raw.githubusercontent.com/francisco154/Fulbito14-ARG/main/fulbito14-Stream-v2.0.0.apk" download>
-            Descargar APK v2.0.0
+        <p class="version">v2.1.0</p>
+        <p class="badge">100% NATIVA</p>
+        <a class="download-btn" href="https://raw.githubusercontent.com/francisco154/Fulbito14-ARG/main/fulbito14-Stream-v2.1.0.apk" download>
+            Descargar APK v2.1.0
         </a>
+        <a class="alt-link" href="fulbito14-Stream-v2.0.0.apk">Descargar v2.0.0 (Cordova)</a>
         <div class="features">
-            <h2>✨ Novedades v2.0</h2>
+            <h2>✨ v2.1.0 - App Nativa</h2>
             <ul>
+                <li><span>📱</span> 100% Nativa - Kotlin + Android TV Leanback</li>
+                <li><span>🎬</span> ExoPlayer (Media3) para reproducción de video</li>
                 <li><span>🔐</span> Login con Supabase Auth (usuario + contraseña en la nube)</li>
                 <li><span>👤</span> Perfiles con avatares en Supabase Storage</li>
                 <li><span>💾</span> Sesión persistente (no repetís login)</li>
-                <li><span>📺</span> Catálogo de series y películas</li>
-                <li><span>🎬</span> Reproductor de video integrado</li>
+                <li><span>📺</span> Catálogo de series y películas desde Supabase</li>
                 <li><span>🤖</span> Bot de Telegram para subir contenido</li>
                 <li><span>🔑</span> Firma V1 + V2 + V3</li>
-                <li><span>📱</span> Compatible con Android TV + Móvil</li>
             </ul>
+        </div>
+        <div class="tech-box">
+            <h3>Stack Tecnológico</h3>
+            <code>Kotlin · Leanback · ExoPlayer/Media3 · OkHttp · Gson · Glide · Coroutines · Supabase · Vercel</code>
         </div>
         <p class="footer">Fulbito14 Stream &copy; 2026 | Android TV App</p>
     </div>
