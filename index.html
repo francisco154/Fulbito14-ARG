@@ -80,33 +80,32 @@
     <div class="container">
         <div class="logo">⚽</div>
         <h1 class="title">Fulbito14 Stream</h1>
-        <p class="version">v3.1.0</p>
-        <p class="badge">TMDB + STREAM PROXY + BUFFER EXTENDIDO</p>
-        <a class="download-btn" href="https://raw.githubusercontent.com/francisco154/Fulbito14-ARG/main/fulbito14-Stream-v3.1.0.apk" download>
-            Descargar APK v3.1.0
+        <p class="version">v3.3.0</p>
+        <p class="badge">HLS + MTPROTO + MESSAGE_ID</p>
+        <a class="download-btn" href="https://raw.githubusercontent.com/francisco154/Fulbito14-ARG/main/fulbito14-Stream-v3.3.0.apk" download>
+            Descargar APK v3.3.0
         </a>
-        <a class="alt-link" href="https://raw.githubusercontent.com/francisco154/Fulbito14-ARG/main/fulbito14-Stream-v3.1.0.apk">Descargar v3.1.0</a>
+        <a class="alt-link" href="https://raw.githubusercontent.com/francisco154/Fulbito14-ARG/main/fulbito14-Stream-v3.3.0.apk">Descargar v3.3.0</a>
+        <a class="alt-link" href="https://raw.githubusercontent.com/francisco154/Fulbito14-ARG/main/fulbito14-Stream-v3.2.0.apk">Descargar v3.2.0</a>
         <a class="alt-link" href="https://raw.githubusercontent.com/francisco154/Fulbito14-ARG/main/fulbito14-Stream-v3.0.0.apk">Descargar v3.0.0</a>
-        <a class="alt-link" href="https://raw.githubusercontent.com/francisco154/Fulbito14-ARG/main/fulbito14-Stream-v2.1.5.apk">Descargar v2.1.5</a>
         <div class="features">
-            <h2>v3.1.0 - TMDB + Stream Proxy + Edit Button + Buffer</h2>
+            <h2>v3.3.0 - HLS Streaming + Message_ID + Buffer Extendido</h2>
             <ul>
-                <li><span>NEW:</span> Botón editar perfil explícito (ícono lápiz) debajo del nombre</li>
-                <li><span>NEW:</span> Metadatos automáticos desde TMDB (posters, descripciones, ratings)</li>
-                <li><span>NEW:</span> Proxy de streaming con soporte Range (HTTP 206 Partial Content)</li>
-                <li><span>NEW:</span> Buffer extendido ExoPlayer (60s min / 120s max) para reproducción sin cortes</li>
-                <li><span>UX:</span> Click en avatar → seleccionar perfil, Click en lápiz → editar/eliminar</li>
-                <li><span>BACKEND:</span> TMDB API keys solo en Vercel (nunca expuestas al cliente)</li>
-                <li><span>BACKEND:</span> Catálogo enriquecido con poster_path y overview de TMDB</li>
-                <li><span>BACKEND:</span> Cache automático de metadatos TMDB en Supabase</li>
-                <li><span>STREAM:</span> ExoPlayer envía Range headers → Vercel proxy → Telegram Bot API</li>
-                <li><span>RECYCLERVIEW:</span> ProfileActivity con RecyclerView + OnKeyListener failsafe</li>
+                <li><span>NEW:</span> Streaming HLS/M3U8 - menor latencia y mejor buffering</li>
+                <li><span>NEW:</span> MTProto channel-based message_id resolution (IDs correctos 7-14)</li>
+                <li><span>NEW:</span> Vercel /api/hls genera playlists M3U8 con byte-range segments</li>
+                <li><span>NEW:</span> ExoPlayer HLS MediaSource con buffer de 1 minuto</li>
+                <li><span>FIX:</span> Message IDs corregidos - canal "Series plus" (-1003716202916)</li>
+                <li><span>FIX:</span> Document resolution via channels.GetMessages (no InputMessageID global)</li>
+                <li><span>STREAM:</span> Todos los 8 episodios de OFF CAMPUS reproducibles</li>
+                <li><span>BACKEND:</span> /api/hls + /api/stream + /api/auth endpoints en Vercel</li>
+                <li><span>BACKEND:</span> Supabase actualizado con message_ids correctos</li>
                 <li><span>Firma</span> V1 + V2 + V3</li>
             </ul>
         </div>
         <div class="tech-box">
             <h3>Stack Tecnologico</h3>
-            <code>Kotlin · RecyclerView · GridLayoutManager · ExoPlayer/Media3 · OkHttp · Glide · Coroutines · TMDB API · Supabase · Vercel (Stream Proxy + Range)</code>
+            <code>Kotlin · ExoPlayer/Media3 HLS · OkHttp · Glide · Coroutines · TMDB API · Supabase · Vercel (HLS + Stream Proxy + MTProto)</code>
         </div>
         <p class="footer">Fulbito14 Stream 2026 | Android TV App</p>
     </div>
