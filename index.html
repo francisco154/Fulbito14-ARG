@@ -6,53 +6,103 @@
     <title>Fulbito14 Stream - Descarga</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3e 100%); color: #fff; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .container { text-align: center; padding: 40px 20px; max-width: 650px; }
-        .logo { font-size: 80px; margin-bottom: 16px; }
-        .title { font-size: 36px; background: linear-gradient(90deg, #4fc3f7, #81d4fa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
-        .version { color: #8888aa; font-size: 16px; margin-bottom: 8px; }
-        .badge { display: inline-block; background: linear-gradient(135deg, #ff9800, #f57c00); color: #fff; padding: 4px 16px; border-radius: 20px; font-size: 13px; font-weight: 700; margin-bottom: 24px; }
-        .download-btn { display: inline-block; padding: 18px 48px; background: linear-gradient(135deg, #4fc3f7, #2196f3); color: #000; text-decoration: none; border-radius: 16px; font-size: 20px; font-weight: 700; transition: all 0.3s; box-shadow: 0 4px 20px rgba(79,195,247,0.3); margin-bottom: 12px; }
-        .download-btn:hover { transform: scale(1.05); box-shadow: 0 6px 30px rgba(79,195,247,0.5); }
-        .alt-link { color: #4fc3f7; font-size: 14px; margin-top: 8px; display: block; }
-        .features { margin-top: 32px; text-align: left; background: rgba(255,255,255,0.05); border-radius: 16px; padding: 24px; }
-        .features h2 { color: #4fc3f7; margin-bottom: 16px; font-size: 20px; }
-        .features ul { list-style: none; }
-        .features li { padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .features li:last-child { border: none; }
-        .features li span { color: #4fc3f7; margin-right: 8px; }
-        .tech-box { margin-top: 24px; background: rgba(255,255,255,0.03); border: 1px solid rgba(79,195,247,0.2); border-radius: 12px; padding: 16px; text-align: left; }
-        .tech-box h3 { color: #4fc3f7; font-size: 14px; margin-bottom: 8px; }
-        .tech-box code { color: #81d4fa; font-size: 12px; }
-        .footer { margin-top: 32px; color: #555; font-size: 13px; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0D1117;
+            color: #E6EDF3;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            max-width: 600px;
+            padding: 40px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 2.5rem;
+            color: #FFC107;
+            margin-bottom: 8px;
+        }
+        .version {
+            font-size: 1.2rem;
+            color: #8B949E;
+            margin-bottom: 30px;
+        }
+        .features {
+            text-align: left;
+            margin: 20px 0;
+            padding: 20px;
+            background: #161B22;
+            border-radius: 12px;
+            border: 1px solid #21262D;
+        }
+        .features h3 {
+            color: #FFC107;
+            margin-bottom: 12px;
+        }
+        .features ul {
+            list-style: none;
+            padding: 0;
+        }
+        .features li {
+            padding: 6px 0;
+            color: #E6EDF3;
+            font-size: 0.95rem;
+        }
+        .features li::before {
+            content: "✓ ";
+            color: #3FB950;
+            font-weight: bold;
+        }
+        .download-btn {
+            display: inline-block;
+            padding: 16px 48px;
+            background: #FFC107;
+            color: #0D1117;
+            text-decoration: none;
+            border-radius: 12px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 20px 0;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 193, 7, 0.3);
+        }
+        .note {
+            color: #8B949E;
+            font-size: 0.85rem;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="logo">⚽</div>
-        <h1 class="title">Fulbito14 Stream</h1>
-        <p class="version">v3.5.0</p>
-        <p class="badge">HLS SUPREMA - VPS DEDICADO</p>
-        <a class="download-btn" href="https://raw.githubusercontent.com/francisco154/Fulbito14-ARG/main/fulbito14-Stream-v3.5.0.apk" download>Descargar APK v3.5.0</a>
-        <a class="alt-link" href="https://github.com/francisco154/Fulbito14-Stream/releases/download/v3.5.0/fulbito14-Stream-v3.5.0.apk">Descargar v3.5.0 (GitHub Release)</a>
-        <a class="alt-link" href="https://raw.githubusercontent.com/francisco154/Fulbito14-ARG/main/fulbito14-Stream-v3.4.0.apk">Descargar v3.4.0 (Vercel)</a>
+        <h1>Fulbito14 Stream</h1>
+        <div class="version">v3.6.0 - F14StreamPlayer + Stream Fix</div>
+
         <div class="features">
-            <h2>v3.5.0 - HLS Suprema: Servidor Dedicado</h2>
+            <h3>Nuevo en v3.6.0</h3>
             <ul>
-                <li><span>RADICAL:</span> Adios Vercel - Servidor VPS dedicado sin limites</li>
-                <li><span>RADICAL:</span> Sin payload limit - Sin timeout - Sin restricciones</li>
-                <li><span>HLS:</span> Segmentos de 10MB (estandar) con #EXT-X-BYTERANGE</li>
-                <li><span>STREAM:</span> MTProto directo via VPS - Streaming sin cortes</li>
-                <li><span>NGINX:</span> Reverse proxy + cache + compresion</li>
-                <li><span>KEEP:</span> Buffer ExoPlayer: 60s min / 120s max</li>
-                <li><span>Firma</span> V1 + V2 + V3</li>
+                <li>F14StreamPlayer - Reproductor propio con controles custom</li>
+                <li>Dual Player: ExoPlayer + F14StreamPlayer como fallback</li>
+                <li>FIX: MTProto offset alignment (OFFSET_INVALID)</li>
+                <li>FIX: HTTP 206 Partial Content correcto</li>
+                <li>FIX: Login "no User_id" corregido</li>
+                <li>Progressive Streaming directo (sin M3U8)</li>
+                <li>APK firmado V1 + V2 + V3</li>
             </ul>
         </div>
-        <div class="tech-box">
-            <h3>Stack Tecnologico</h3>
-            <code>Kotlin · ExoPlayer/Media3 HLS · OkHttp · Glide · Coroutines · Supabase · VPS (Node.js + Express + Nginx + MTProto)</code>
-        </div>
-        <p class="footer">Fulbito14 Stream 2026 | Android TV App</p>
+
+        <a class="download-btn" href="https://github.com/francisco154/Fulbito14-Stream/releases/download/v3.6.0/Fulbito14-v3.6.0.apk">
+            Descargar APK v3.6.0
+        </a>
+
+        <p class="note">Para Android TV / Fire TV / Móviles<br>Instalación desde fuentes desconocidas activada</p>
     </div>
 </body>
 </html>
