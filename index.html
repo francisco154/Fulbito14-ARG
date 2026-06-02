@@ -198,37 +198,36 @@
 
         <!-- ==================== STREAM TAB ==================== -->
         <div id="tab-stream" class="tab-content">
-            <!-- v1.5.1 LATEST -->
+            <!-- v3.6.2 LATEST -->
             <div class="version-section">
-                <div class="version">v1.5.1 <span class="badge-new">NUEVO</span> <span class="badge-stable">ESTABLE</span></div>
+                <div class="version">v3.6.2 <span class="badge-new">NUEVO</span> <span class="badge-stable">ESTABLE</span></div>
                 <br><br>
-                <a href="fulbito14-Stream-v1.5.1.apk" class="download-btn stream">
+                <a href="Fulbito14-Stream-v3.6.2.apk" class="download-btn stream">
+                    DESCARGAR v3.6.2
+                </a>
+                <div class="file-info">10.2 MB &middot; APK &middot; Android 5.0+ (Android TV)</div>
+            </div>
+
+            <!-- v1.5.1 OLD -->
+            <div class="version-section">
+                <div class="version">v1.5.1 <span class="badge-beta">ANTERIOR</span></div>
+                <br><br>
+                <a href="fulbito14-Stream-v1.5.1.apk" class="download-btn beta">
                     DESCARGAR v1.5.1
                 </a>
                 <div class="file-info">7.1 MB &middot; APK &middot; Android 5.0+ (Android TV)</div>
             </div>
 
-            <!-- v1.5.0 OLD -->
-            <div class="version-section">
-                <div class="version">v1.5.0 <span class="badge-beta">BETA</span></div>
-                <br><br>
-                <a href="fulbito14-Stream-v1.5.0.apk" class="download-btn beta">
-                    DESCARGAR v1.5.0
-                </a>
-                <div class="file-info">9.4 MB &middot; APK &middot; Android 5.0+ (Android TV)</div>
-            </div>
-
             <div class="whats-new">
-                <h3 class="stream-color">Nuevo en v1.5.1</h3>
+                <h3 class="stream-color">Nuevo en v3.6.2</h3>
                 <ul>
-                    <li class="fix">Fix crash al crear perfil - esquema Supabase corregido</li>
-                    <li class="fix">Fix columna is_kids vs is_default (mismatch con bot)</li>
-                    <li class="fix">Fix columna last_watched vs last_watched_at</li>
-                    <li class="fix">Fix java.time.Instant crash en Android &lt;8</li>
-                    <li class="fix">Fix URL del proxy de stream</li>
-                    <li class="stream-feat">Login con sesi&oacute;n persistente - no pide credenciales cada vez</li>
-                    <li class="stream-feat">Creaci&oacute;n de perfil con 12 avatars divertidos</li>
-                    <li class="stream-feat">Auto-configuraci&oacute;n de Supabase al loguearse</li>
+                    <li class="fix">FIX: Video ya reproduce (stream completo en 200)</li>
+                    <li class="fix">FIX: HLS con #EXT-X-MAP (moov atom)</li>
+                    <li class="fix">FIX: CORS headers en streaming</li>
+                    <li class="stream-feat">Error logging en ambos reproductores</li>
+                    <li class="stream-feat">Pantalla siempre activa durante video</li>
+                    <li class="stream-feat">Barra de buffer con progreso real</li>
+                    <li class="stream-feat">Server: /api/init-segment + moov probing</li>
                     <li class="stream-feat">Firma V1 + V2 + V3 verificada</li>
                 </ul>
             </div>
