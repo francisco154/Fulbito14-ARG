@@ -7,7 +7,7 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: #0d1117; color: #c9d1d9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .container { text-align: center; padding: 40px; }
+        .container { text-align: center; padding: 40px; max-width: 700px; }
         h1 { font-size: 2.5em; color: #ffd700; margin-bottom: 10px; }
         .version { font-size: 1.2em; color: #8b949e; margin-bottom: 30px; }
         .download-btn { display: inline-block; background: #ffd700; color: #0d1117; padding: 15px 40px; border-radius: 12px; text-decoration: none; font-size: 1.3em; font-weight: bold; transition: transform 0.2s, box-shadow 0.2s; }
@@ -18,26 +18,34 @@
         .changelog ul { list-style: none; }
         .changelog li { padding: 4px 0; }
         .changelog li::before { content: "\2713 "; color: #3fb950; }
+        .code-section { margin-top: 20px; background: #161b22; border-radius: 12px; padding: 20px; max-width: 600px; margin-left: auto; margin-right: auto; }
+        .code-section h2 { color: #ffd700; margin-bottom: 12px; }
+        .code-section p { color: #8b949e; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Fulbito14 Stream</h1>
-        <p class="version">v3.6.2 — Android TV</p>
-        <a href="Fulbito14-Stream-v3.6.2.apk" class="download-btn">Descargar APK</a>
+        <p class="version">v3.6.3 — Pure Range Proxy · Android TV</p>
+        <a href="Fulbito14-Stream-v3.6.3.apk" class="download-btn">Descargar APK</a>
         <div class="changelog">
-            <h2>v3.6.2 Changelog</h2>
+            <h2>v3.6.3 Changelog</h2>
             <ul>
-                <li>FIX: Video ya reproduce (stream completo en 200)</li>
-                <li>FIX: HLS con #EXT-X-MAP (moov atom)</li>
-                <li>FIX: CORS headers en streaming</li>
-                <li>Nuevo: Error logging en ambos reproductores</li>
-                <li>Nuevo: Pantalla siempre activa durante video</li>
-                <li>Nuevo: Barra de buffer con progreso real</li>
-                <li>Server: /api/init-segment + moov probing</li>
+                <li>PARADIGMA: Proxy de Rango Puro (sin HLS/M3U8)</li>
+                <li>Servidor tunnela bytes directamente desde Telegram</li>
+                <li>ExoPlayer ProgressiveMediaSource exclusivo</li>
+                <li>Nuevo: Descargar APK via codigo numerico en la TV</li>
+                <li>Eliminado: Dependencia media3-exoplayer-hls</li>
+                <li>Fix: Pantalla siempre activa durante video</li>
+                <li>Fix: Error logging con Toast en ambos reproductores</li>
+                <li>Fix: Barra de buffer con porcentaje real</li>
             </ul>
         </div>
-        <p class="info">APK firmado V1+V2+V3 · Android TV · Para uso educativo</p>
+        <div class="code-section">
+            <h2>Descarga via Codigo en TV</h2>
+            <p>En la app, ve a la pantalla de Descarga e ingresa un codigo de 4+ digitos para descargar la APK directamente en tu TV.</p>
+        </div>
+        <p class="info">APK firmado V1+V2+V3 · Android TV · Proxy de Rango Puro</p>
     </div>
 </body>
 </html>
