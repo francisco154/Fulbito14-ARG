@@ -3,64 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fulbito14 Stream - Descarga</title>
+    <title>Fulbito14 Stream - Descargar APK</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            background: #0D1117;
-            color: #E6EDF3;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        .container { max-width: 600px; padding: 40px; text-align: center; }
-        h1 { font-size: 2.5rem; color: #FFC107; margin-bottom: 8px; }
-        .version { font-size: 1.2rem; color: #8B949E; margin-bottom: 30px; }
-        .features {
-            text-align: left; margin: 20px 0; padding: 20px;
-            background: #161B22; border-radius: 12px; border: 1px solid #21262D;
-        }
-        .features h3 { color: #FFC107; margin-bottom: 12px; }
-        .features ul { list-style: none; padding: 0; }
-        .features li { padding: 6px 0; color: #E6EDF3; font-size: 0.95rem; }
-        .features li::before { content: "\2713 "; color: #3FB950; font-weight: bold; }
-        .download-btn {
-            display: inline-block; padding: 16px 48px;
-            background: #FFC107; color: #0D1117; text-decoration: none;
-            border-radius: 12px; font-size: 1.3rem; font-weight: 700;
-            margin: 20px 0; transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .download-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(255, 193, 7, 0.3);
-        }
-        .note { color: #8B949E; font-size: 0.85rem; margin-top: 20px; }
+        body { background: #0d1117; color: #c9d1d9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .container { text-align: center; padding: 40px; }
+        h1 { font-size: 2.5em; color: #ffd700; margin-bottom: 10px; }
+        .version { font-size: 1.2em; color: #8b949e; margin-bottom: 30px; }
+        .download-btn { display: inline-block; background: #ffd700; color: #0d1117; padding: 15px 40px; border-radius: 12px; text-decoration: none; font-size: 1.3em; font-weight: bold; transition: transform 0.2s, box-shadow 0.2s; }
+        .download-btn:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(255, 215, 0, 0.4); }
+        .info { margin-top: 30px; color: #8b949e; font-size: 0.9em; }
+        .changelog { text-align: left; max-width: 600px; margin: 30px auto; background: #161b22; border-radius: 12px; padding: 20px; }
+        .changelog h2 { color: #ffd700; margin-bottom: 12px; }
+        .changelog ul { list-style: none; }
+        .changelog li { padding: 4px 0; }
+        .changelog li::before { content: "\2713 "; color: #3fb950; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Fulbito14 Stream</h1>
-        <div class="version">v3.6.1 - Settings + Player Fix + Preload</div>
-        <div class="features">
-            <h3>Nuevo en v3.6.1</h3>
+        <p class="version">v3.6.2 — Android TV</p>
+        <a href="Fulbito14-Stream-v3.6.2.apk" class="download-btn">Descargar APK</a>
+        <div class="changelog">
+            <h2>v3.6.2 Changelog</h2>
             <ul>
-                <li>FIX: Reproductores superpuestos - Solo 1 a la vez</li>
-                <li>Pantalla de Configuracion completa</li>
-                <li>Selector de Reproductor (ExoPlayer / F14StreamPlayer / Auto)</li>
-                <li>Selector de Stream (Progressive / HLS / Auto)</li>
-                <li>Buffer configurable (15s / 30s / 1min)</li>
-                <li>Modo Oscuro / Modo Claro</li>
-                <li>Next Episode Preload - Capitulos arrancan instantaneo</li>
-                <li>APK firmado V1 + V2 + V3</li>
+                <li>FIX: Video ya reproduce (stream completo en 200)</li>
+                <li>FIX: HLS con #EXT-X-MAP (moov atom)</li>
+                <li>FIX: CORS headers en streaming</li>
+                <li>Nuevo: Error logging en ambos reproductores</li>
+                <li>Nuevo: Pantalla siempre activa durante video</li>
+                <li>Nuevo: Barra de buffer con progreso real</li>
+                <li>Server: /api/init-segment + moov probing</li>
             </ul>
         </div>
-        <a class="download-btn" href="https://github.com/francisco154/Fulbito14-Stream/releases/download/v3.6.1/Fulbito14-v3.6.1.apk">
-            Descargar APK v3.6.1
-        </a>
-        <p class="note">Para Android TV / Fire TV / Moviles<br>Instalacion desde fuentes desconocidas activada</p>
+        <p class="info">APK firmado V1+V2+V3 · Android TV · Para uso educativo</p>
     </div>
 </body>
 </html>
