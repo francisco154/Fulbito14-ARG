@@ -16,93 +16,51 @@
             align-items: center;
             justify-content: center;
         }
-        .container {
-            max-width: 600px;
-            padding: 40px;
-            text-align: center;
-        }
-        h1 {
-            font-size: 2.5rem;
-            color: #FFC107;
-            margin-bottom: 8px;
-        }
-        .version {
-            font-size: 1.2rem;
-            color: #8B949E;
-            margin-bottom: 30px;
-        }
+        .container { max-width: 600px; padding: 40px; text-align: center; }
+        h1 { font-size: 2.5rem; color: #FFC107; margin-bottom: 8px; }
+        .version { font-size: 1.2rem; color: #8B949E; margin-bottom: 30px; }
         .features {
-            text-align: left;
-            margin: 20px 0;
-            padding: 20px;
-            background: #161B22;
-            border-radius: 12px;
-            border: 1px solid #21262D;
+            text-align: left; margin: 20px 0; padding: 20px;
+            background: #161B22; border-radius: 12px; border: 1px solid #21262D;
         }
-        .features h3 {
-            color: #FFC107;
-            margin-bottom: 12px;
-        }
-        .features ul {
-            list-style: none;
-            padding: 0;
-        }
-        .features li {
-            padding: 6px 0;
-            color: #E6EDF3;
-            font-size: 0.95rem;
-        }
-        .features li::before {
-            content: "✓ ";
-            color: #3FB950;
-            font-weight: bold;
-        }
+        .features h3 { color: #FFC107; margin-bottom: 12px; }
+        .features ul { list-style: none; padding: 0; }
+        .features li { padding: 6px 0; color: #E6EDF3; font-size: 0.95rem; }
+        .features li::before { content: "\2713 "; color: #3FB950; font-weight: bold; }
         .download-btn {
-            display: inline-block;
-            padding: 16px 48px;
-            background: #FFC107;
-            color: #0D1117;
-            text-decoration: none;
-            border-radius: 12px;
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin: 20px 0;
-            transition: transform 0.2s, box-shadow 0.2s;
+            display: inline-block; padding: 16px 48px;
+            background: #FFC107; color: #0D1117; text-decoration: none;
+            border-radius: 12px; font-size: 1.3rem; font-weight: 700;
+            margin: 20px 0; transition: transform 0.2s, box-shadow 0.2s;
         }
         .download-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(255, 193, 7, 0.3);
         }
-        .note {
-            color: #8B949E;
-            font-size: 0.85rem;
-            margin-top: 20px;
-        }
+        .note { color: #8B949E; font-size: 0.85rem; margin-top: 20px; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Fulbito14 Stream</h1>
-        <div class="version">v3.6.0 - F14StreamPlayer + Stream Fix</div>
-
+        <div class="version">v3.6.1 - Settings + Player Fix + Preload</div>
         <div class="features">
-            <h3>Nuevo en v3.6.0</h3>
+            <h3>Nuevo en v3.6.1</h3>
             <ul>
-                <li>F14StreamPlayer - Reproductor propio con controles custom</li>
-                <li>Dual Player: ExoPlayer + F14StreamPlayer como fallback</li>
-                <li>FIX: MTProto offset alignment (OFFSET_INVALID)</li>
-                <li>FIX: HTTP 206 Partial Content correcto</li>
-                <li>FIX: Login "no User_id" corregido</li>
-                <li>Progressive Streaming directo (sin M3U8)</li>
+                <li>FIX: Reproductores superpuestos - Solo 1 a la vez</li>
+                <li>Pantalla de Configuracion completa</li>
+                <li>Selector de Reproductor (ExoPlayer / F14StreamPlayer / Auto)</li>
+                <li>Selector de Stream (Progressive / HLS / Auto)</li>
+                <li>Buffer configurable (15s / 30s / 1min)</li>
+                <li>Modo Oscuro / Modo Claro</li>
+                <li>Next Episode Preload - Capitulos arrancan instantaneo</li>
                 <li>APK firmado V1 + V2 + V3</li>
             </ul>
         </div>
-
-        <a class="download-btn" href="https://github.com/francisco154/Fulbito14-Stream/releases/download/v3.6.0/Fulbito14-v3.6.0.apk">
-            Descargar APK v3.6.0
+        <a class="download-btn" href="https://github.com/francisco154/Fulbito14-Stream/releases/download/v3.6.1/Fulbito14-v3.6.1.apk">
+            Descargar APK v3.6.1
         </a>
-
-        <p class="note">Para Android TV / Fire TV / Móviles<br>Instalación desde fuentes desconocidas activada</p>
+        <p class="note">Para Android TV / Fire TV / Moviles<br>Instalacion desde fuentes desconocidas activada</p>
     </div>
 </body>
 </html>
