@@ -80,32 +80,29 @@
     <div class="container">
         <div class="logo">⚽</div>
         <h1 class="title">Fulbito14 Stream</h1>
-        <p class="version">v3.3.0</p>
-        <p class="badge">HLS + MTPROTO + MESSAGE_ID</p>
-        <a class="download-btn" href="https://raw.githubusercontent.com/francisco154/Fulbito14-ARG/main/fulbito14-Stream-v3.3.0.apk" download>
-            Descargar APK v3.3.0
+        <p class="version">v3.4.0</p>
+        <p class="badge">HLS + BYTERANGE 4.1MB + MTPROTO</p>
+        <a class="download-btn" href="https://raw.githubusercontent.com/francisco154/Fulbito14-ARG/main/fulbito14-Stream-v3.4.0.apk" download>
+            Descargar APK v3.4.0
         </a>
+        <a class="alt-link" href="https://github.com/francisco154/Fulbito14-Stream/releases/download/v3.4.0/fulbito14-Stream-v3.4.0.apk">Descargar v3.4.0 (GitHub Release)</a>
         <a class="alt-link" href="https://raw.githubusercontent.com/francisco154/Fulbito14-ARG/main/fulbito14-Stream-v3.3.0.apk">Descargar v3.3.0</a>
         <a class="alt-link" href="https://raw.githubusercontent.com/francisco154/Fulbito14-ARG/main/fulbito14-Stream-v3.2.0.apk">Descargar v3.2.0</a>
-        <a class="alt-link" href="https://raw.githubusercontent.com/francisco154/Fulbito14-ARG/main/fulbito14-Stream-v3.0.0.apk">Descargar v3.0.0</a>
         <div class="features">
-            <h2>v3.3.0 - HLS Streaming + Message_ID + Buffer Extendido</h2>
+            <h2>v3.4.0 - Hack Serverless: 4.1MB Byte-Range Chunks</h2>
             <ul>
-                <li><span>NEW:</span> Streaming HLS/M3U8 - menor latencia y mejor buffering</li>
-                <li><span>NEW:</span> MTProto channel-based message_id resolution (IDs correctos 7-14)</li>
-                <li><span>NEW:</span> Vercel /api/hls genera playlists M3U8 con byte-range segments</li>
-                <li><span>NEW:</span> ExoPlayer HLS MediaSource con buffer de 1 minuto</li>
-                <li><span>FIX:</span> Message IDs corregidos - canal "Series plus" (-1003716202916)</li>
-                <li><span>FIX:</span> Document resolution via channels.GetMessages (no InputMessageID global)</li>
-                <li><span>STREAM:</span> Todos los 8 episodios de OFF CAMPUS reproducibles</li>
-                <li><span>BACKEND:</span> /api/hls + /api/stream + /api/auth endpoints en Vercel</li>
-                <li><span>BACKEND:</span> Supabase actualizado con message_ids correctos</li>
+                <li><span>HACK:</span> #EXT-X-BYTERANGE estricto: cada fragmento = 4,100,000 bytes (4.1 MB)</li>
+                <li><span>HACK:</span> Obliga a ExoPlayer a hacer multiples GET pequenos que Vercel despacha en &lt;5s</li>
+                <li><span>HACK:</span> Cada chunk bajo el payload limit de Vercel (4.5 MB) - sin corte de conexion</li>
+                <li><span>KEEP:</span> Buffer ExoPlayer intacto: 60s min / 120s max</li>
+                <li><span>KEEP:</span> HLS/M3U8 streaming con message_id resolution via MTProto</li>
+                <li><span>KEEP:</span> /api/hls + /api/stream + /api/auth endpoints en Vercel</li>
                 <li><span>Firma</span> V1 + V2 + V3</li>
             </ul>
         </div>
         <div class="tech-box">
             <h3>Stack Tecnologico</h3>
-            <code>Kotlin · ExoPlayer/Media3 HLS · OkHttp · Glide · Coroutines · TMDB API · Supabase · Vercel (HLS + Stream Proxy + MTProto)</code>
+            <code>Kotlin · ExoPlayer/Media3 HLS · OkHttp · Glide · Coroutines · TMDB API · Supabase · Vercel (HLS BYTERANGE 4.1MB + Stream Proxy + MTProto)</code>
         </div>
         <p class="footer">Fulbito14 Stream 2026 | Android TV App</p>
     </div>
